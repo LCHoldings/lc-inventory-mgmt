@@ -1,0 +1,248 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime? @map("email_verified")
+  phone_number  String?
+  name          String?
+  job_title     String?
+  employee_id   String?
+  account_type  String    @default("viewer")
+  suspended     Boolean   @default(false)
+  notes         String?
+  image         String?
+  images        Image[]   @relation("UserImages")
+  devices       Device[]
+  items         Item[]
+  logs          Log[]
+
+  // NextAuth.js fields
+  accounts      Account[]
+  sessions      Session[]
+  Authenticator Authenticator[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// OAuth accounts
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+// Current user login sessions
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Email verification tokens
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
+
+// Other models remain unchanged
+model Device {
+  id                BigInt       @id @default(autoincrement())
+  deviceid          String       @unique
+  name              String
+  status            Status       @relation(fields: [statusId], references: [statusid])
+  statusId          String
+  current_user      User?        @relation(fields: [current_userId], references: [id])
+  current_userId    String?
+  location          Location?    @relation(fields: [locationId], references: [locationid])
+  locationId        String?
+  purchase_cost     String?
+  purchase_date     DateTime?
+  purchase_supplier Supplier?    @relation(fields: [supplierId], references: [supplierid])
+  supplierId        String?
+  purchase_orderid  BigInt?
+  serial_number     String?
+  model             Model?       @relation(fields: [modelId], references: [modelid])
+  modelId           String?
+  image             Image?       @relation(fields: [imageId], references: [imageid])
+  imageId           String?
+  byod              Boolean
+  notes             String?
+  available         Boolean
+  manufacturer      Manufacturer @relation(fields: [manufacturerId], references: [manufacturerid])
+  manufacturerId    String
+  category          Category     @relation(fields: [categoryId], references: [categoryid])
+  categoryId        String
+}
+
+model Location {
+  id               BigInt     @id @default(autoincrement())
+  locationid       String     @unique
+  name             String
+  parent_location  Location?  @relation("ParentChild", fields: [parentLocationId], references: [locationid])
+  parentLocationId String?
+  children         Location[] @relation("ParentChild")
+  devices          Device[]
+  items            Item[]
+}
+
+model Item {
+  id                BigInt       @id @default(autoincrement())
+  itemid            String       @unique
+  name              String
+  status            Status       @relation(fields: [statusId], references: [statusid])
+  statusId          String
+  current_user      User?        @relation(fields: [current_userId], references: [id])
+  current_userId    String?
+  location          Location?    @relation(fields: [locationId], references: [locationid])
+  locationId        String?
+  purchase_cost     String?
+  purchase_date     DateTime?
+  purchase_supplier Supplier?    @relation(fields: [supplierId], references: [supplierid])
+  supplierId        String?
+  purchase_orderid  BigInt?
+  serial_number     String?
+  model             Model?       @relation(fields: [modelId], references: [modelid])
+  modelId           String?
+  image             Image?       @relation(fields: [imageId], references: [imageid])
+  imageId           String?
+  byod              Boolean
+  notes             String?
+  available         Boolean
+  manufacturer      Manufacturer @relation(fields: [manufacturerId], references: [manufacturerid])
+  manufacturerId    String
+  category          Category     @relation(fields: [categoryId], references: [categoryid])
+  categoryId        String
+}
+
+model Supplier {
+  id             BigInt   @id @default(autoincrement())
+  supplierid     String   @unique
+  website        String
+  phone_number   String
+  contact_person String
+  post_adress    String
+  email_adress   String
+  devices        Device[]
+  items          Item[]
+}
+
+model Manufacturer {
+  id             BigInt   @id @default(autoincrement())
+  manufacturerid String   @unique
+  name           String
+  image          Image?   @relation(fields: [imageId], references: [imageid])
+  imageId        String?
+  site_url       String?
+  support_url    String?
+  support_phone  String?
+  support_email  String
+  devices        Device[]
+  items          Item[]
+  models         Model[]
+}
+
+model Model {
+  id             BigInt       @id @default(autoincrement())
+  modelid        String       @unique
+  name           String
+  image          Image?       @relation(fields: [imageId], references: [imageid])
+  imageId        String?
+  model_number   String?
+  manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [manufacturerid])
+  manufacturerId String
+  category       Category     @relation(fields: [categoryId], references: [categoryid])
+  categoryId     String
+  devices        Device[]
+  items          Item[]
+}
+
+model Category {
+  id         BigInt   @id @default(autoincrement())
+  categoryid String   @unique
+  name       String
+  type       String
+  devices    Device[]
+  items      Item[]
+  models     Model[]
+}
+
+model Log {
+  id        BigInt @id @default(autoincrement())
+  logid     String @unique
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String
+  action    String
+  item      String
+  item_type String
+}
+
+model Status {
+  id       BigInt   @id @default(autoincrement())
+  statusid String   @unique
+  name     String
+  color    String
+  default  Boolean @default(false)
+  devices  Device[]
+  items    Item[]
+}
+
+model Image {
+  id            BigInt         @id @default(autoincrement())
+  imageid       String         @unique
+  cdn_url       String
+  users         User[]         @relation("UserImages")
+  devices       Device[]
+  items         Item[]
+  manufacturers Manufacturer[]
+  models        Model[]
+}

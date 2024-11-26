@@ -1,11 +1,13 @@
+"use client"
+
+import { useEffect } from "react"
+
 import { AppSidebar } from "@/components/app-sidebar"
 import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -13,8 +15,21 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { redirect } from "next/navigation";
+
+import { useSession } from 'next-auth/react';
 
 export default function Page() {
+    const { data: session } = useSession()
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (!session) {
+                redirect('/auth/signin')
+            }
+        }, 1000); // Adjust the delay as needed
+
+        return () => clearTimeout(timer);
+    }, [session])
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -27,12 +42,8 @@ export default function Page() {
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
                                     <BreadcrumbLink href="#">
-                                        Building Your Application
+                                        Dashboard
                                     </BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
-                                <BreadcrumbItem>
-                                    <BreadcrumbPage>Data Fetching</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>

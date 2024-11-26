@@ -12,6 +12,9 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
+import { useSession, signOut } from "next-auth/react"
+import { redirect } from "next/navigation"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,16 +32,17 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}) {
+import { Skeleton } from "@/components/ui/skeleton"
+
+export function NavUser() {
   const { isMobile } = useSidebar()
+  const { data: session } = useSession()
+
+  const userData = {
+    name: session?.user?.name || "John Doe",
+    email: session?.user?.email || "john.doe@example.com",
+    avatar: session?.user?.image || "",
+  }
 
   return (
     <SidebarMenu>
@@ -49,14 +53,28 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">{(user.name).split("",1)}</AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
-              </div>
+              {session ? (
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage src={userData.avatar} alt={userData.name} />
+                  <AvatarFallback className="rounded-lg">
+                    {userData.name.split(" ").map((n) => n[0]).join("")}
+                  </AvatarFallback>
+                </Avatar>
+              ) : (
+                <Skeleton className="h-8 w-8 rounded-lg" />
+              )}
+
+              {session ? (
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">{userData.name}</span>
+                  <span className="truncate text-xs">{userData.email}</span>
+                </div>
+              ) : (
+                <div className="grid flex-1 text-left text-sm gap-1.5 leading-tight">
+                  <Skeleton className="rounded-lg w-24 h-3" />
+                  <Skeleton className="rounded-lg w-32 h-2" />
+                </div>
+              )}
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -68,25 +86,39 @@ export function NavUser({
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">{(user.name).split("",1)}</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
-                </div>
+                {session ? (
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarImage src={userData.avatar} alt={userData.name} />
+                    <AvatarFallback className="rounded-lg">
+                      {userData.name.split(" ").map((n) => n[0]).join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                ) : (
+                  <Skeleton className="h-8 w-8 rounded-lg" />
+                )}
+
+                {session ? (
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">{userData.name}</span>
+                    <span className="truncate text-xs">{userData.email}</span>
+                  </div>
+                ) : (
+                  <div className="grid flex-1 text-left text-sm gap-1.5 leading-tight">
+                    <Skeleton className="rounded-lg w-24 h-3" />
+                    <Skeleton className="rounded-lg w-32 h-2" />
+                  </div>
+                )}
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => redirect('/dashboard/account')}>
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => signOut()} >
               <LogOut />
               Log out
             </DropdownMenuItem>

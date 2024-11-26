@@ -26,13 +26,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Skeleton } from "@/components/ui/skeleton"
+
+import { useSession } from "next-auth/react"
 
 const data = {
-  user: {
-    name: "Lazyllama",
-    email: "me@lazyllama.xyz",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Devices",
@@ -80,15 +78,15 @@ const data = {
       items: [
         {
           title: "Status Presets",
-          url: "/dasboard/settings/status-presets",
+          url: "/dashboard/settings/status-presets",
         },
         {
           title: "Categories",
-          url: "/dasboard/settings/categories",
+          url: "/dashboard/settings/categories",
         },
         {
           title: "Log Settings",
-          url: "/dasboard/settings/log-settings",
+          url: "/dashboard/settings/log-settings",
         },
       ],
     },
@@ -125,6 +123,8 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session } = useSession()
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -132,13 +132,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Command className="size-4" />
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
+                  {session ? (
+                    <Command className="size-4" />
+                  ) : (
+                    <Skeleton className="size-8 rounded-lg" />
+                  )}
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">LCHoldings</span>
-                  <span className="truncate text-xs">Yap yap</span>
-                </div>
+                {session ? (
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">LCHoldings</span>
+                    <span className="truncate text-xs">Yap yap</span>
+                  </div>
+                ) : (
+                  <div className="grid flex-1 gap-1.5 text-left text-sm leading-tight">
+                    <Skeleton className="h-3 w-32 rounded-lg" />
+                    <Skeleton className="h-2 w-24 rounded-lg" />
+                  </div>
+                )}
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -150,7 +161,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   )
