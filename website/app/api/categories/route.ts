@@ -27,7 +27,7 @@ export const POST = auth(async function GET(req) {
         const { name, type } = await req.json()
         const category = await prisma.category.create({
             data: {
-                categoryid: `${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
+                id: `${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
                 name,
                 type,
             },
@@ -50,7 +50,7 @@ export const DELETE = auth(async function GET(req) {
     try {
         const { categoryid } = await req.json()
         await prisma.category.delete({
-            where: { categoryid },
+            where: { id: categoryid },
         })
         return NextResponse.json({ success: true })
     } catch (error) {

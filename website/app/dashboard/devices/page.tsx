@@ -1,5 +1,11 @@
+'use server'
+
 import { Suspense } from 'react'
 import { prisma } from '@/prisma'
+import { Device } from '@prisma/client'
+
+import { getLocationURL, getUserFromId, getUserURL } from '@/lib/utils'
+
 import { AppSidebar } from "@/components/app-sidebar"
 import {
     Breadcrumb,
@@ -17,28 +23,22 @@ import {
 } from "@/components/ui/sidebar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+
 import { CheckCircle2, XCircle, AlertCircle, Smartphone, Laptop, ComputerIcon as Desktop } from 'lucide-react'
+
 import Image from 'next/image'
 
 async function getDevices() {
-    return await prisma.device.findMany({
-        include: {
-            status: true,
-            current_user: true,
-            location: true,
-            model: {
-                include: {
-                    manufacturer: true,
-                    category: true,
-                },
-            },
-            image: true,
-        },
-    })
+    return await prisma.device.findMany()
 }
 
-function DeviceIcon({ category }) {
-    switch (category.toLowerCase()) {
+async function DeviceIcon({ categoryId }: { categoryId: string }) {
+    const categoryName = await prisma.category.findUnique({
+        where: { id: categoryId },
+        select: { name: true },
+    })
+
+    switch (String(categoryName).toLowerCase()) {
         case 'smartphone':
             return <Smartphone className="w-5 h-5" />
         case 'laptop':
@@ -48,18 +48,36 @@ function DeviceIcon({ category }) {
     }
 }
 
-function StatusBadge({ status }) {
+async function StatusBadge({ statusId }: { statusId: string }) {
+    const status = await prisma.status.findUnique({
+        where: { id: statusId },
+        select: { name: true, color: true },
+    })
+
     return (
         <Badge
             variant="outline"
-            style={{ backgroundColor: status.color, color: 'white' }}
+            style={{ backgroundColor: (status?.color || "#FFF"), color: 'white' }}
         >
-            {status.name}
+            {status?.name || 'N/A'}
         </Badge>
     )
 }
 
-function AvailabilityIcon({ available }) {
+async function getLocationName(locationId: string) {
+    const locationName = await prisma.location.findUnique({
+        where: { id: locationId },
+        select: { name: true },
+    })
+
+    if (!locationName) {
+        return 'N/A'
+    } else {
+        return locationName.name
+    }
+}
+
+function AvailabilityIcon({ available }: { available: boolean }) {
     return available ? (
         <CheckCircle2 className="w-5 h-5 text-green-500" />
     ) : (
@@ -67,7 +85,12 @@ function AvailabilityIcon({ available }) {
     )
 }
 
-function DeviceList({ devices }) {
+async function getUserName(userId: string) {
+    const user = await getUserFromId(userId)
+    return user?.name || ""
+}
+
+function DeviceList({ devices }: { devices: Device[] }) {
     return (
         <Table>
             <TableHeader>
@@ -88,7 +111,7 @@ function DeviceList({ devices }) {
                         <TableCell>
                             {device.image ? (
                                 <Image
-                                    src={device.image.cdn_url}
+                                    src={device.image}
                                     alt={device.name}
                                     width={50}
                                     height={50}
@@ -99,18 +122,26 @@ function DeviceList({ devices }) {
                             )}
                         </TableCell>
                         <TableCell className="font-medium">{device.name}</TableCell>
-                        <TableCell>{device.model?.name || 'N/A'}</TableCell>
+                        <TableCell>{device.modelId || 'N/A'}</TableCell>
                         <TableCell>
                             <div className="flex items-center gap-2">
-                                <DeviceIcon category={device.model?.category?.name || 'unknown'} />
-                                {device.model?.category?.name || 'Unknown'}
+                                <DeviceIcon categoryId={device.categoryId || 'unknown'} /> {/* Category name */}
+                                {device.categoryId || 'Unknown'} {/* Category name */}
                             </div>
                         </TableCell>
                         <TableCell>
-                            <StatusBadge status={device.status} />
+                            <StatusBadge statusId={device.statusId} />
                         </TableCell>
-                        <TableCell>{device.location?.name || 'N/A'}</TableCell>
-                        <TableCell>{device.current_user?.name || 'N/A'}</TableCell>
+                        <TableCell>
+                            <a href={getLocationURL(device?.locationId || "") || "#"}>
+                                {getLocationName(device?.locationId || "1") || 'N/A'}
+                            </a>
+                        </TableCell>
+                        <TableCell>
+                            <a href={getUserURL(device?.current_userId || "")}>
+                                {getUserName(device?.current_userId || 'N/A') || 'N/A'}
+                            </a>
+                        </TableCell>
                         <TableCell>
                             <AvailabilityIcon available={device.available} />
                         </TableCell>

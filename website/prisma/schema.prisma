@@ -22,7 +22,6 @@ model User {
   suspended     Boolean   @default(false)
   notes         String?
   image         String?
-  images        Image[]   @relation("UserImages")
   devices       Device[]
   items         Item[]
   logs          Log[]
@@ -96,14 +95,13 @@ model Authenticator {
 
 // Other models remain unchanged
 model Device {
-  id                BigInt       @id @default(autoincrement())
-  deviceid          String       @unique
+  id                String       @id @default(cuid())
   name              String
-  status            Status       @relation(fields: [statusId], references: [statusid])
+  status            Status       @relation(fields: [statusId], references: [id])
   statusId          String
   current_user      User?        @relation(fields: [current_userId], references: [id])
   current_userId    String?
-  location          Location?    @relation(fields: [locationId], references: [locationid])
+  location          Location?    @relation(fields: [locationId], references: [id])
   locationId        String?
   purchase_cost     String?
   purchase_date     DateTime?
@@ -111,24 +109,22 @@ model Device {
   supplierId        String?
   purchase_orderid  BigInt?
   serial_number     String?
-  model             Model?       @relation(fields: [modelId], references: [modelid])
+  model             Model?       @relation(fields: [modelId], references: [id])
   modelId           String?
-  image             Image?       @relation(fields: [imageId], references: [imageid])
-  imageId           String?
+  image             String?
   byod              Boolean
   notes             String?
   available         Boolean
-  manufacturer      Manufacturer @relation(fields: [manufacturerId], references: [manufacturerid])
+  manufacturer      Manufacturer @relation(fields: [manufacturerId], references: [id])
   manufacturerId    String
-  category          Category     @relation(fields: [categoryId], references: [categoryid])
+  category          Category     @relation(fields: [categoryId], references: [id])
   categoryId        String
 }
 
 model Location {
-  id               BigInt     @id @default(autoincrement())
-  locationid       String     @unique
+  id               String     @id @default(cuid())
   name             String
-  parent_location  Location?  @relation("ParentChild", fields: [parentLocationId], references: [locationid])
+  parent_location  Location?  @relation("ParentChild", fields: [parentLocationId], references: [id])
   parentLocationId String?
   children         Location[] @relation("ParentChild")
   devices          Device[]
@@ -136,14 +132,13 @@ model Location {
 }
 
 model Item {
-  id                BigInt       @id @default(autoincrement())
-  itemid            String       @unique
+  id                String       @id @default(cuid())
   name              String
-  status            Status       @relation(fields: [statusId], references: [statusid])
+  status            Status       @relation(fields: [statusId], references: [id])
   statusId          String
   current_user      User?        @relation(fields: [current_userId], references: [id])
   current_userId    String?
-  location          Location?    @relation(fields: [locationId], references: [locationid])
+  location          Location?    @relation(fields: [locationId], references: [id])
   locationId        String?
   purchase_cost     String?
   purchase_date     DateTime?
@@ -151,16 +146,15 @@ model Item {
   supplierId        String?
   purchase_orderid  BigInt?
   serial_number     String?
-  model             Model?       @relation(fields: [modelId], references: [modelid])
+  model             Model?       @relation(fields: [modelId], references: [id])
   modelId           String?
-  image             Image?       @relation(fields: [imageId], references: [imageid])
-  imageId           String?
+  image             String?
   byod              Boolean
   notes             String?
   available         Boolean
-  manufacturer      Manufacturer @relation(fields: [manufacturerId], references: [manufacturerid])
+  manufacturer      Manufacturer @relation(fields: [manufacturerId], references: [id])
   manufacturerId    String
-  category          Category     @relation(fields: [categoryId], references: [categoryid])
+  category          Category     @relation(fields: [categoryId], references: [id])
   categoryId        String
 }
 
@@ -177,48 +171,42 @@ model Supplier {
 }
 
 model Manufacturer {
-  id             BigInt   @id @default(autoincrement())
-  manufacturerid String   @unique
-  name           String
-  image          Image?   @relation(fields: [imageId], references: [imageid])
-  imageId        String?
-  site_url       String?
-  support_url    String?
-  support_phone  String?
-  support_email  String
-  devices        Device[]
-  items          Item[]
-  models         Model[]
+  id            String   @id @default(cuid())
+  name          String
+  image         String?
+  site_url      String?
+  support_url   String?
+  support_phone String?
+  support_email String
+  devices       Device[]
+  items         Item[]
+  models        Model[]
 }
 
 model Model {
-  id             BigInt       @id @default(autoincrement())
-  modelid        String       @unique
+  id             String       @id @default(cuid())
   name           String
-  image          Image?       @relation(fields: [imageId], references: [imageid])
-  imageId        String?
+  image          String?
   model_number   String?
-  manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [manufacturerid])
+  manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id])
   manufacturerId String
-  category       Category     @relation(fields: [categoryId], references: [categoryid])
+  category       Category     @relation(fields: [categoryId], references: [id])
   categoryId     String
   devices        Device[]
   items          Item[]
 }
 
 model Category {
-  id         BigInt   @id @default(autoincrement())
-  categoryid String   @unique
-  name       String
-  type       String
-  devices    Device[]
-  items      Item[]
-  models     Model[]
+  id      String   @id @default(cuid())
+  name    String
+  type    String
+  devices Device[]
+  items   Item[]
+  models  Model[]
 }
 
 model Log {
-  id        BigInt @id @default(autoincrement())
-  logid     String @unique
+  id        String @id @default(cuid())
   user      User   @relation(fields: [userId], references: [id])
   userId    String
   action    String
@@ -227,22 +215,10 @@ model Log {
 }
 
 model Status {
-  id       BigInt   @id @default(autoincrement())
-  statusid String   @unique
-  name     String
-  color    String
-  default  Boolean @default(false)
-  devices  Device[]
-  items    Item[]
-}
-
-model Image {
-  id            BigInt         @id @default(autoincrement())
-  imageid       String         @unique
-  cdn_url       String
-  users         User[]         @relation("UserImages")
-  devices       Device[]
-  items         Item[]
-  manufacturers Manufacturer[]
-  models        Model[]
+  id      String   @id @default(cuid())
+  name    String
+  color   String
+  default Boolean  @default(false)
+  devices Device[]
+  items   Item[]
 }

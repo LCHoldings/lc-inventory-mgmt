@@ -39,7 +39,7 @@ export const POST = auth(async function GET(req) {
 
         const status = await prisma.status.create({
             data: {
-                statusid: `${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
+                id: `${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
                 name,
                 color,
                 default: isDefault,
@@ -63,7 +63,7 @@ export const DELETE = auth(async function GET(req) {
     try {
         const { statusid } = await req.json()
         await prisma.status.delete({
-            where: { statusid },
+            where: { id: statusid },
         })
         return NextResponse.json({ success: true })
     } catch (error) {
@@ -85,12 +85,12 @@ export const PUT = auth(async function GET(req) {
             },
         })
 
-        if (isDefault === true && checkDefault?.statusid !== statusid) {
+        if (isDefault === true && checkDefault?.id !== statusid) {
             return NextResponse.json({ error: 'Default status already exists' }, { status: 400 })
         }
 
         const status = await prisma.status.update({
-            where: { statusid },
+            where: { id: statusid },
             data: {
                 name,
                 color,
