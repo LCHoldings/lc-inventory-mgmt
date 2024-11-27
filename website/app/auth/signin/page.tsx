@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { Github, Loader2, Mail, Apple, KeyRound } from 'lucide-react'
-import { useSession, signIn } from "next-auth/react"
+import { signIn } from "next-auth/react"
 import { signIn as passkeySignIn } from "next-auth/webauthn"
 
 import { Button } from "@/components/ui/button"
@@ -29,8 +29,6 @@ const loginMethods = [
 export default function LoginPage() {
     const [isLoading, setIsLoading] = useState<LoginMethod | null>(null)
     const [email, setEmail] = useState("")
-
-    const { data: session } = useSession()
 
     const handleLogin = async (method: LoginMethod) => {
         setIsLoading(method)

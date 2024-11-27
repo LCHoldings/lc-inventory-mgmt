@@ -69,6 +69,7 @@ export function StatusManagement() {
             const data = await response.json()
             setStatuses(data)
         } catch (error) {
+            console.error(error)
             toast({
                 title: "Error",
                 description: "Failed to fetch statuses",
@@ -119,6 +120,7 @@ export function StatusManagement() {
                 description: "Status deleted successfully",
             })
         } catch (error) {
+            console.error(error)
             toast({
                 title: "Error",
                 description: "Failed to delete status",

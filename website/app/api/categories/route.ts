@@ -14,6 +14,7 @@ export const GET = auth(async function GET(req) {
         }))
         return NextResponse.json(serializedCategories)
     } catch (error) {
+        console.error(error)
         return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 })
     }
 })
@@ -37,6 +38,7 @@ export const POST = auth(async function GET(req) {
         }
         return NextResponse.json(serializedCategory)
     } catch (error) {
+        console.error(error)
         return NextResponse.json({ error: 'Failed to create category' }, { status: 500 })
     }
 })
@@ -52,6 +54,7 @@ export const DELETE = auth(async function GET(req) {
         })
         return NextResponse.json({ success: true })
     } catch (error) {
+        console.error(error)
         return NextResponse.json({ error: 'Failed to delete category' }, { status: 500 })
     }
 })

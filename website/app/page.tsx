@@ -1,8 +1,6 @@
 "use server"
 
-import { Button } from "@/components/ui/button";
 import { auth } from "@/auth"
-import { redirect } from "next/navigation";
 import PasskeyLogin from '@/components/passkey-login';
 
 export default async function Home() {

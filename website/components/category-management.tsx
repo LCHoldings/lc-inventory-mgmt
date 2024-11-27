@@ -52,6 +52,7 @@ export function CategoryManagement() {
             const data = await response.json()
             setCategories(data)
         } catch (error) {
+            console.error(error)
             toast({
                 title: "Error",
                 description: "Failed to fetch categories",
@@ -77,6 +78,7 @@ export function CategoryManagement() {
                 description: "Category created successfully",
             })
         } catch (error) {
+            console.error(error)
             toast({
                 title: "Error",
                 description: "Failed to create category",
@@ -106,6 +108,7 @@ export function CategoryManagement() {
                 description: "Category deleted successfully",
             })
         } catch (error) {
+            console.error(error)
             toast({
                 title: "Error",
                 description: "Failed to delete category",

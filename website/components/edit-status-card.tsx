@@ -10,7 +10,6 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
     Form,
     FormControl,
@@ -20,13 +19,11 @@ import {
     FormLabel
 } from "@/components/ui/form"
 
-import { useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { toast } from "@/hooks/use-toast"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { default } from '../auth.config';
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -47,10 +44,6 @@ type Status = {
 }
 
 export function EditStatusCard({ status, setCardOpen }: { status: Status, setCardOpen: (open: boolean) => void }) {
-    const [name, setName] = useState("")
-    const [color, setColor] = useState("")
-    const [isDefault, setIsDefault] = useState(false)
-
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {

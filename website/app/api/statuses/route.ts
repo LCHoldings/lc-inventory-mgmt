@@ -14,6 +14,7 @@ export const GET = auth(async function GET(req) {
         }))
         return NextResponse.json(serializedStatuses)
     } catch (error) {
+        console.error(error)
         return NextResponse.json({ error: 'Failed to fetch statuses' }, { status: 500 })
     }
 })
@@ -66,6 +67,7 @@ export const DELETE = auth(async function GET(req) {
         })
         return NextResponse.json({ success: true })
     } catch (error) {
+        console.error(error)
         return NextResponse.json({ error: 'Failed to delete status' }, { status: 500 })
     }
 })
@@ -101,6 +103,7 @@ export const PUT = auth(async function GET(req) {
         }
         return NextResponse.json(serializedStatus)
     } catch (error) {
+        console.error(error)
         return NextResponse.json({ error: 'Failed to update status' }, { status: 500 })
     }
 })
