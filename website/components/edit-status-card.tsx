@@ -26,6 +26,7 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { toast } from "@/hooks/use-toast"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { default } from '../auth.config';
 
 const formSchema = z.object({
     name: z.string().min(2, {
@@ -45,7 +46,7 @@ type Status = {
     default: boolean
 }
 
-export function EditStatusCard({ statusId, setCardOpen, fetchStatuses }: { statusId: string, setCardOpen: (open: boolean) => void, fetchStatuses: () => void }) {
+export function EditStatusCard({ status, setCardOpen }: { status: Status, setCardOpen: (open: boolean) => void }) {
     const [name, setName] = useState("")
     const [color, setColor] = useState("")
     const [isDefault, setIsDefault] = useState(false)
@@ -53,33 +54,33 @@ export function EditStatusCard({ statusId, setCardOpen, fetchStatuses }: { statu
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
-            color: "#000000",
-            default: false,
+            name: status.name,
+            color: status.color,
+            default: status.default,
         },
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
             const response = await fetch('/api/statuses', {
-                method: 'POST',
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(values),
+                body: JSON.stringify({ ...values, statusid: status.statusid }),
             })
             if (!response.ok) {
                 const getError = await response.text()
                 throw new Error(JSON.parse(getError).error)
             }
-            await fetchStatuses()
             form.reset()
+            setCardOpen(false)
             toast({
                 title: "Success",
-                description: "Status created successfully",
+                description: "Status updated successfully",
             })
         } catch (error) {
             toast({
                 title: "Error",
-                description: String(error) || "Failed to create status",
+                description: String(error) || "Failed to update status",
                 variant: "destructive",
             })
         }
@@ -89,7 +90,7 @@ export function EditStatusCard({ statusId, setCardOpen, fetchStatuses }: { statu
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
             <Card className="w-[400px]">
                 <CardHeader>
-                    <CardTitle>Edit Status</CardTitle>
+                    <CardTitle>Edit Status {status.statusid}</CardTitle>
                     <CardDescription>Change color, default and name.</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -143,7 +144,7 @@ export function EditStatusCard({ statusId, setCardOpen, fetchStatuses }: { statu
                                     </FormItem>
                                 )}
                             />
-                            <CardFooter className="flex justify-between -">
+                            <CardFooter className="flex justify-between p-0">
                                 <Button type="submit">Save</Button>
                                 <Button variant="outline" type="button" onClick={() => setCardOpen(false)}>Cancel</Button>
                             </CardFooter>

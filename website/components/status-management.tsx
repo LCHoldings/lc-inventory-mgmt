@@ -35,7 +35,7 @@ export function StatusManagement() {
     const [statuses, setStatuses] = useState<Status[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [cardOpen, setCardOpen] = useState(false)
-    const [cardStatusId, setCardStatusId] = useState<string | null>(null)
+    const [cardStatus, setCardStatus] = useState<Status>()
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -50,9 +50,15 @@ export function StatusManagement() {
         fetchStatuses()
     }, [])
 
-    function openCard(statusId: string) {
+    useEffect(() => {
+        if (!cardOpen) {
+            fetchStatuses()
+        }
+    }, [cardOpen])
+
+    function openCard(status: Status) {
         setCardOpen(true)
-        setCardStatusId(statusId)
+        setCardStatus(status)
     }
 
     async function fetchStatuses() {
@@ -215,7 +221,7 @@ export function StatusManagement() {
                                     <Button
                                         variant="default"
                                         size="icon"
-                                        onClick={() => openCard(status.statusid)}
+                                        onClick={() => openCard(status)}
                                     >
                                         <Pen className="h-4 w-4" />
                                         <span className="sr-only">Edit status</span>
@@ -226,8 +232,8 @@ export function StatusManagement() {
                     </TableBody>
                 </Table>
             )}
-            {cardOpen && cardStatusId && (
-                <EditStatusCard statusId={cardStatusId} setCardOpen={setCardOpen} />
+            {cardOpen && cardStatus && (
+                <EditStatusCard status={cardStatus} setCardOpen={setCardOpen} />
             )}
         </div>
     )

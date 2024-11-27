@@ -1,7 +1,11 @@
+import { auth } from "@/auth"
 import { NextResponse } from 'next/server'
 import { prisma } from '@/prisma'
 
-export async function GET() {
+export const GET = auth(async function GET(req) {
+    if (!req.auth) {
+        return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
+    }
     try {
         const statuses = await prisma.status.findMany()
         const serializedStatuses = statuses.map(status => ({
@@ -12,13 +16,15 @@ export async function GET() {
     } catch (error) {
         return NextResponse.json({ error: 'Failed to fetch statuses' }, { status: 500 })
     }
-}
+})
 
-export async function POST(request: Request) {
+export const POST = auth(async function GET(req) {
+    if (!req.auth) {
+        return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
+    }
     try {
-        const { name, color, default: isDefault } = await request.json()
-        console.log(name, color, isDefault)
-        
+        const { name, color, default: isDefault } = await req.json()
+
         if (isDefault === true) {
             const checkIfDefaultExists = await prisma.status.findFirst({
                 where: {
@@ -47,11 +53,14 @@ export async function POST(request: Request) {
         console.error(error)
         return NextResponse.json({ error: 'Failed to create status' }, { status: 500 })
     }
-}
+})
 
-export async function DELETE(request: Request) {
+export const DELETE = auth(async function GET(req) {
+    if (!req.auth) {
+        return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
+    }
     try {
-        const { statusid } = await request.json()
+        const { statusid } = await req.json()
         await prisma.status.delete({
             where: { statusid },
         })
@@ -59,4 +68,39 @@ export async function DELETE(request: Request) {
     } catch (error) {
         return NextResponse.json({ error: 'Failed to delete status' }, { status: 500 })
     }
-}
+})
+
+export const PUT = auth(async function GET(req) {
+    if (!req.auth) {
+        return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
+    }
+    try {
+        const { statusid, name, color, default: isDefault } = await req.json()
+
+        const checkDefault = await prisma.status.findFirst({
+            where: {
+                default: true,
+            },
+        })
+
+        if (isDefault === true && checkDefault?.statusid !== statusid) {
+            return NextResponse.json({ error: 'Default status already exists' }, { status: 400 })
+        }
+
+        const status = await prisma.status.update({
+            where: { statusid },
+            data: {
+                name,
+                color,
+                default: isDefault,
+            },
+        })
+        const serializedStatus = {
+            ...status,
+            id: status.id.toString(),
+        }
+        return NextResponse.json(serializedStatus)
+    } catch (error) {
+        return NextResponse.json({ error: 'Failed to update status' }, { status: 500 })
+    }
+})

@@ -177,7 +177,7 @@ export function CategoryManagement() {
                         {categories.map((category) => (
                             <TableRow key={category.categoryid}>
                                 <TableCell>{category.name}</TableCell>
-                                <TableCell>{category.type}</TableCell>
+                                <TableCell><span className="capitalize">{category.type}</span></TableCell>
                                 <TableCell>
                                     <Button
                                         variant="destructive"

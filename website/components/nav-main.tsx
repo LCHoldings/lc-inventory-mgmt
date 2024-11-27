@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { ChevronRight, type LucideIcon } from "lucide-react"
 
 import {
@@ -31,14 +32,38 @@ export function NavMain({
       title: string
       url: string
     }[]
-  }[]
+  }[],
 }) {
+  const [collapsedState, setCollapsedState] = useState<{ [key: string]: boolean }>({})
+
+  useEffect(() => {
+    const savedState = localStorage.getItem("collapsedState")
+    if (savedState) {
+      setCollapsedState(JSON.parse(savedState))
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("collapsedState", JSON.stringify(collapsedState))
+  }, [collapsedState])
+
+  const handleToggle = (title: string) => {
+    setCollapsedState((prevState) => ({
+      ...prevState,
+      [title]: !prevState[title],
+    }))
+  }
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
-          <Collapsible key={item.title} asChild defaultOpen={item.isActive}>
+          <Collapsible
+            key={item.title}
+            asChild
+            defaultOpen={collapsedState[item.title] ?? item.isActive}
+          >
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip={item.title}>
                 <a href={item.url}>
@@ -49,7 +74,10 @@ export function NavMain({
               {item.items?.length ? (
                 <>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuAction className="data-[state=open]:rotate-90">
+                    <SidebarMenuAction
+                      className="data-[state=open]:rotate-90"
+                      onClick={() => handleToggle(item.title)}
+                    >
                       <ChevronRight />
                       <span className="sr-only">Toggle</span>
                     </SidebarMenuAction>

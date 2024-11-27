@@ -90,7 +90,6 @@ export default function AccountForm({ user }: { user: User }) {
 
             router.refresh()
         } catch (error) {
-            console.log(error)
             toast({
                 title: "Error",
                 description: "Something went wrong. Your account was not updated. Please try again.",
