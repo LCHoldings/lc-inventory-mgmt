@@ -8,18 +8,14 @@ export const GET = auth(async function GET(req) {
     }
     try {
         const models = await prisma.model.findMany()
-        const serializedModels = models.map(models => ({
-            ...models,
-            id: models.id.toString(), // assuming 'id' is the BigInt field
-        }))
-        return NextResponse.json(serializedModels)
+        return NextResponse.json(models)
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'Failed to fetch models' }, { status: 500 })
     }
 })
 
-export const POST = auth(async function GET(req) {
+export const POST = auth(async function POST(req) {
     if (!req.auth) {
         return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
     }
@@ -35,18 +31,14 @@ export const POST = auth(async function GET(req) {
                 categoryId
             },
         })
-        const serializedModel = {
-            ...model,
-            id: model.id.toString(), // assuming 'id' is the BigInt field
-        }
-        return NextResponse.json(serializedModel)
+        return NextResponse.json(model)
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'Failed to create model' }, { status: 500 })
     }
 })
 
-export const DELETE = auth(async function GET(req) {
+export const DELETE = auth(async function DELETE(req) {
     if (!req.auth) {
         return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
     }

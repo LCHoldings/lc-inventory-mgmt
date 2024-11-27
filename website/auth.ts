@@ -19,7 +19,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     providers: [
         GitHub, 
         Resend({
-            from: "Lazyllama <auth@noreply.lcholdings.net>"
+            from: "Fuck Python <auth@noreply.lcholdings.net>"
         }),
         Apple,
         Passkey

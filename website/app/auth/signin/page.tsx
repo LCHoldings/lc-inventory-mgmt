@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useState } from "react"
-import { Github, Loader2, Mail, Apple, KeyRound } from 'lucide-react'
+import React, { useState, useEffect } from "react"
+import { Github, Loader2, Mail, Apple, KeyRound, AlertCircle } from 'lucide-react'
 import { signIn } from "next-auth/react"
 import { signIn as passkeySignIn } from "next-auth/webauthn"
 
@@ -17,6 +17,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { signinErrors } from '../../../lib/utils';
+import { useSearchParams } from "next/navigation"
+
 
 type LoginMethod = 'magic-link' | 'github' | 'apple' | 'passkey'
 
@@ -29,6 +32,15 @@ const loginMethods = [
 export default function LoginPage() {
     const [isLoading, setIsLoading] = useState<LoginMethod | null>(null)
     const [email, setEmail] = useState("")
+    const [error, setError] = useState<string | null>(null)
+    const searchParams = useSearchParams()
+
+    useEffect(() => {
+        const errorParam = searchParams.get('error')
+        if (errorParam) {
+            setError(errorParam)
+        }
+    }, [searchParams])
 
     const handleLogin = async (method: LoginMethod) => {
         setIsLoading(method)
@@ -48,12 +60,29 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex h-screen w-full items-center justify-center px-4 bg-gradient-to-br from-primary/20 to-secondary/20">
+        <div className="flex flex-col gap-4 h-screen w-full items-center justify-center px-4 bg-gradient-to-br from-primary/20 to-secondary/20">
+            {error && (
+                <Card className="mx-auto max-w-sm w-full transition-all duration-300 hover:shadow-lg">
+                    <CardContent className="flex items-center space-x-4 p-4">
+                        <div className="flex-shrink-0">
+                            <div className="rounded-full bg-destructive/30 p-2">
+                                <AlertCircle className="h-6 w-6 text-destructive" />
+                            </div>
+                        </div>
+                        <div className="flex-grow">
+                            <CardTitle className="text-lg font-semibold text-foreground">{error}</CardTitle>
+                            <CardDescription className="text-sm text-muted-foreground">
+                                {signinErrors[error as keyof typeof signinErrors] || signinErrors.default}
+                            </CardDescription>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
             <Card className="mx-auto max-w-sm w-full transition-all duration-300 hover:shadow-lg">
                 <CardHeader className="space-y-1 pb-2 flex flex-col items-center">
                     <div className="rounded-full bg-primary/10 p-3 mb-2">
                         <KeyRound className="h-6 w-6 text-primary" />
-                    </div>                      
+                    </div>
                     <CardTitle className="text-3xl font-bold text-center">Login</CardTitle>
                     <CardDescription className="text-center text-sm text-muted-foreground">
                         Choose your preferred login method

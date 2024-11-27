@@ -1,5 +1,5 @@
 "use client"
-
+import { useRouter } from 'next/navigation';
 import {
   BadgeCheck,
   ChevronsUpDown,
@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/avatar"
 
 import { useSession, signOut } from "next-auth/react"
-import { redirect } from "next/navigation"
 
 import {
   DropdownMenu,
@@ -37,6 +36,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { data: session } = useSession()
+  const router = useRouter();
 
   const userData = {
     name: session?.user?.name || "John Doe",
@@ -112,7 +112,7 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => redirect('/dashboard/account')}>
+              <DropdownMenuItem onClick={() => router.push('/dashboard/account')}>
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>

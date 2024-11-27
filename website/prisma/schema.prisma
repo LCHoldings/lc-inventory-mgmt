@@ -19,7 +19,7 @@ model User {
   job_title     String?
   employee_id   String?
   account_type  String    @default("viewer")
-  suspended     Boolean   @default(false)
+  suspended     Boolean?   @default(false)
   notes         String?
   image         String?
   devices       Device[]

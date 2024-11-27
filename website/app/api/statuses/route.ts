@@ -8,18 +8,14 @@ export const GET = auth(async function GET(req) {
     }
     try {
         const statuses = await prisma.status.findMany()
-        const serializedStatuses = statuses.map(status => ({
-            ...status,
-            id: status.id.toString(),
-        }))
-        return NextResponse.json(serializedStatuses)
+        return NextResponse.json(statuses)
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'Failed to fetch statuses' }, { status: 500 })
     }
 })
 
-export const POST = auth(async function GET(req) {
+export const POST = auth(async function POST(req) {
     if (!req.auth) {
         return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
     }
@@ -45,18 +41,14 @@ export const POST = auth(async function GET(req) {
                 default: isDefault,
             },
         })
-        const serializedStatus = {
-            ...status,
-            id: status.id.toString(),
-        }
-        return NextResponse.json(serializedStatus)
+        return NextResponse.json(status)
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'Failed to create status' }, { status: 500 })
     }
 })
 
-export const DELETE = auth(async function GET(req) {
+export const DELETE = auth(async function DELETE(req) {
     if (!req.auth) {
         return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
     }
@@ -72,7 +64,7 @@ export const DELETE = auth(async function GET(req) {
     }
 })
 
-export const PUT = auth(async function GET(req) {
+export const PUT = auth(async function PUT(req) {
     if (!req.auth) {
         return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
     }
@@ -97,11 +89,7 @@ export const PUT = auth(async function GET(req) {
                 default: isDefault,
             },
         })
-        const serializedStatus = {
-            ...status,
-            id: status.id.toString(),
-        }
-        return NextResponse.json(serializedStatus)
+        return NextResponse.json(status)
     } catch (error) {
         console.error(error)
         return NextResponse.json({ error: 'Failed to update status' }, { status: 500 })
