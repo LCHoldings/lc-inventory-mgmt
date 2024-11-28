@@ -32,11 +32,22 @@ import {
 } from "@/components/ui/sidebar"
 
 import { Skeleton } from "@/components/ui/skeleton"
+import { useEffect } from 'react';
 
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { data: session } = useSession()
   const router = useRouter();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!session) {
+        router.push('/auth/signin')
+      }
+    }, 1000); // Adjust the delay as needed
+
+    return () => clearTimeout(timer);
+  }, [session, router])
 
   const userData = {
     name: session?.user?.name || "John Doe",
@@ -54,14 +65,14 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               {session ? (
-                <Avatar className="h-8 w-8 rounded-lg">
+                <Avatar className="h-8 w-8 rounded-sm">
                   <AvatarImage src={userData.avatar} alt={userData.name} />
-                  <AvatarFallback className="rounded-lg">
+                  <AvatarFallback className="rounded-sm">
                     {userData.name.split(" ").map((n) => n[0]).join("")}
                   </AvatarFallback>
                 </Avatar>
               ) : (
-                <Skeleton className="h-8 w-8 rounded-lg" />
+                <Skeleton className="h-8 w-8 rounded-sm" />
               )}
 
               {session ? (
@@ -87,14 +98,14 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 {session ? (
-                  <Avatar className="h-8 w-8 rounded-lg">
+                  <Avatar className="h-8 w-8 rounded-sm">
                     <AvatarImage src={userData.avatar} alt={userData.name} />
-                    <AvatarFallback className="rounded-lg">
+                    <AvatarFallback className="rounded-sm">
                       {userData.name.split(" ").map((n) => n[0]).join("")}
                     </AvatarFallback>
                   </Avatar>
                 ) : (
-                  <Skeleton className="h-8 w-8 rounded-lg" />
+                  <Skeleton className="h-8 w-8 rounded-sm" />
                 )}
 
                 {session ? (

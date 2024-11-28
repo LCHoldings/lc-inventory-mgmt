@@ -1,7 +1,6 @@
 "use client"
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from "react"
 import { ChevronRight, type LucideIcon } from "lucide-react"
 
 import {
@@ -13,7 +12,6 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -26,34 +24,14 @@ export function NavMain({
 }: {
   items: {
     title: string
-    url: string
     icon: LucideIcon
-    isActive?: boolean
     items?: {
       title: string
       url: string
     }[]
   }[],
 }) {
-  const [collapsedState, setCollapsedState] = useState<{ [key: string]: boolean }>({})
   const router = useRouter();
-  useEffect(() => {
-    const savedState = localStorage.getItem("collapsedState")
-    if (savedState) {
-      setCollapsedState(JSON.parse(savedState))
-    }
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem("collapsedState", JSON.stringify(collapsedState))
-  }, [collapsedState])
-
-  const handleToggle = (title: string) => {
-    setCollapsedState((prevState) => ({
-      ...prevState,
-      [title]: !prevState[title],
-    }))
-  }
 
   return (
     <SidebarGroup>
@@ -63,41 +41,29 @@ export function NavMain({
           <Collapsible
             key={item.title}
             asChild
-            defaultOpen={collapsedState[item.title] ?? item.isActive}
+            className="group/collapsible"
           >
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip={item.title}>
-                <a onClick={() => router.push(item.url)}>
-                  <item.icon />
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton tooltip={item.title}>
+                  {item.icon && <item.icon />}
                   <span>{item.title}</span>
-                </a>
-              </SidebarMenuButton>
-              {item.items?.length ? (
-                <>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuAction
-                      className="data-[state=open]:rotate-90"
-                      onClick={() => handleToggle(item.title)}
-                    >
-                      <ChevronRight />
-                      <span className="sr-only">Toggle</span>
-                    </SidebarMenuAction>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {item.items?.map((subItem) => (
-                        <SidebarMenuSubItem key={subItem.title}>
-                          <SidebarMenuSubButton asChild>
-                            <a onClick={() => router.push(subItem.url)}>
-                              <span>{subItem.title}</span>
-                            </a>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      ))}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </>
-              ) : null}
+                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  {item.items?.map((subItem) => (
+                    <SidebarMenuSubItem key={subItem.title}>
+                      <SidebarMenuSubButton asChild>
+                        <a onClick={() => router.push(subItem.url)}>
+                          <span>{subItem.title}</span>
+                        </a>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  ))}
+                </SidebarMenuSub>
+              </CollapsibleContent>
             </SidebarMenuItem>
           </Collapsible>
         ))}

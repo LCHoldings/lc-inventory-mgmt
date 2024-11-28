@@ -20,13 +20,13 @@ export const POST = auth(async function POST(req) {
         return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
     }
     try {
-        const { name, image, model_number, manufacturerId, categoryId } = await req.json()
+        const { name, image, modelNumber, manufacturerId, categoryId } = await req.json()
         const model = await prisma.model.create({
             data: {
                 id: `${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
                 name,
                 image,
-                model_number,
+                modelNumber,
                 manufacturerId,
                 categoryId
             },

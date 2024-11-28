@@ -11,6 +11,8 @@ import {
   Send,
   Settings2,
   Laptop,
+  Hammer,
+  List,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -34,46 +36,26 @@ const data = {
   navMain: [
     {
       title: "Devices",
-      url: "/dashboard/devices",
       icon: Laptop,
-      isActive: true,
       items: [
         {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
+          title: "List",
+          url: "/dashboard/devices",
         },
       ],
     },
     {
       title: "Items",
-      url: "/dashboard/items",
       icon: Mouse,
       items: [
         {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
+          title: "List",
+          url: "/dashboard/items",
         },
       ],
     },
     {
       title: "Settings",
-      url: "/dashboard/settings",
       icon: Settings2,
       items: [
         {
@@ -90,17 +72,37 @@ const data = {
         },
       ],
     },
+    {
+      title: "Manufacturers",
+      icon: Hammer,
+      items: [
+        {
+          title: "List",
+          url: "/dashboard/manufacturers",
+        },
+        {
+          title: "Manage",
+          url: "/dashboard/manufacturers/manage",
+        }
+      ],
+
+    },
+    {
+      title: "Product Models",
+      icon: List,
+      items: [
+        {
+          title: "List",
+          url: "/dashboard/product-models",
+        },
+      ],
+    }
   ],
   navSecondary: [
     {
       title: "Support",
       url: "#",
       icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
     },
   ],
   projects: [
@@ -126,7 +128,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: session } = useSession()
 
   return (
-    <Sidebar className="border-r" variant="inset" {...props}>
+    <Sidebar className="border-r" collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

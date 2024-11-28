@@ -1,11 +1,10 @@
 'use server'
 
-import { redirect  } from 'next/navigation';
 import { Suspense } from 'react'
 import { prisma } from '@/prisma'
 import { Device } from '@prisma/client'
 
-import { getLocationURL, getUserFromId, getUserURL } from '@/lib/utils'
+import { getLocationURL, getUserFromEmail, getUserURL } from '@/lib/utils'
 
 import { AppSidebar } from "@/components/app-sidebar"
 import {
@@ -58,9 +57,9 @@ async function StatusBadge({ statusId }: { statusId: string }) {
     return (
         <Badge
             variant="outline"
-            style={{ backgroundColor: (status?.color || "#FFF"), color: 'white' }}
+            style={{ backgroundColor: (status?.color || "#FFF"), color: 'white' }}
         >
-            {status?.name || 'N/A'}
+            {status?.name || 'N/A'}
         </Badge>
     )
 }
@@ -86,13 +85,13 @@ function AvailabilityIcon({ available }: { available: boolean }) {
     )
 }
 
-async function getUserName(userId: string) {
-    const user = await getUserFromId(userId)
+async function getUserName(userEmail: string) {
+    const user = await getUserFromEmail(userEmail)
     return user?.name || ""
 }
 
 function DeviceList({ devices }: { devices: Device[] }) {
- 
+
     return (
         <Table>
             <TableHeader>
@@ -127,21 +126,24 @@ function DeviceList({ devices }: { devices: Device[] }) {
                         <TableCell>{device.modelId || 'N/A'}</TableCell>
                         <TableCell>
                             <div className="flex items-center gap-2">
-                                <DeviceIcon categoryId={device.categoryId || 'unknown'} /> {/* Category name */}
-                                {device.categoryId || 'Unknown'} {/* Category name */}
+                                {/* <DeviceIcon categoryId={device.categoryId || 'unknown'} /> Category name */}
+                                {device.categoryId || 'N/A'} {/* Category name */}
                             </div>
                         </TableCell>
                         <TableCell>
-                            <StatusBadge statusId={device.statusId} />
+                            {/* <StatusBadge statusId={device.statusId} /> */}
+                            <p>{device.statusId || "N/A"}</p>
                         </TableCell>
                         <TableCell>
-                            <a onClick={() => redirect(getLocationURL(device?.locationId || "") || "#")}>
-                                {getLocationName(device?.locationId || "1") || 'N/A'}
+                            <a>
+                                {/* getLocationName(device?.locationId || "1") */}
+                                {device.locationId || 'N/A'}
                             </a>
                         </TableCell>
                         <TableCell>
-                            <a onClick={() => redirect(getUserURL(device?.current_userId || ""))}>
-                                {getUserName(device?.current_userId || 'N/A') || 'N/A'}
+                            <a>
+                                {/* getUserName(device?.currentUserId || 'N/A') */}
+                                {device.currentUserId || 'N/A'}
                             </a>
                         </TableCell>
                         <TableCell>
@@ -168,7 +170,7 @@ export default async function Page() {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink onClick={() => redirect('/dashboard')}>
+                                    <BreadcrumbLink>
                                         Dashboard
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>

@@ -18,6 +18,7 @@ export const signinErrors: Record<SignInPageErrorParam | "default", string> = {
     "Sign in failed. Check the details you provided are correct.",
   SessionRequired: "Please sign in to access this page.",
   MissingCSRF: "An error occurred. Please try again.",
+  UserSuspended: "Your account is currently suspended. Please contact your administrator.",
 }
 
 export function cn(...inputs: ClassValue[]) {
@@ -32,10 +33,20 @@ export function getUserURL(userId: string) {
   return `dashboard/users/${userId}`
 }
 
-export function getUserFromId(userId: string) {
-  const user = prisma.user.findUnique({
-    where: { id: userId },
+export async function getUserFromEmail(userEmail: string) {
+  const user = await prisma.user.findUnique({
+    where: { email: userEmail },
   })
 
   return user
+}
+
+export async function checkUserType(userEmail: string, type: string, checkSuspended?: string) {
+  const user = await getUserFromEmail(userEmail)
+
+  if (checkSuspended && user?.suspended) {
+    return false
+  }
+
+  return user?.accountType == type
 }

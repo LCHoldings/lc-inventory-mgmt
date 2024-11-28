@@ -13,23 +13,24 @@ generator client {
 model User {
   id            String    @id @default(cuid())
   email         String    @unique
-  emailVerified DateTime? @map("email_verified")
-  phone_number  String?
+  emailVerified DateTime?
+  phoneNumber   String?
   name          String?
-  job_title     String?
-  employee_id   String?
-  account_type  String    @default("viewer")
-  suspended     Boolean?   @default(false)
+  jobTitle      String?
+  employeeId    String?
+  accountType   String    @default("viewer") // viewer, user, admin
+  suspended     Boolean   @default(false)
   notes         String?
   image         String?
-  devices       Device[]
-  items         Item[]
-  logs          Log[]
+
+  devices Device[]
+  items   Item[]
+  logs    Log[]
 
   // NextAuth.js fields
-  accounts      Account[]
-  sessions      Session[]
-  Authenticator Authenticator[]
+  accounts      Account[] // OAuth accounts
+  sessions      Session[] // Current user login sessions
+  Authenticator Authenticator[] // WebAuthn support
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -95,36 +96,36 @@ model Authenticator {
 
 // Other models remain unchanged
 model Device {
-  id                String       @id @default(cuid())
-  name              String
-  status            Status       @relation(fields: [statusId], references: [id])
-  statusId          String
-  current_user      User?        @relation(fields: [current_userId], references: [id])
-  current_userId    String?
-  location          Location?    @relation(fields: [locationId], references: [id])
-  locationId        String?
-  purchase_cost     String?
-  purchase_date     DateTime?
-  purchase_supplier Supplier?    @relation(fields: [supplierId], references: [supplierid])
-  supplierId        String?
-  purchase_orderid  BigInt?
-  serial_number     String?
-  model             Model?       @relation(fields: [modelId], references: [id])
-  modelId           String?
-  image             String?
-  byod              Boolean
-  notes             String?
-  available         Boolean
-  manufacturer      Manufacturer @relation(fields: [manufacturerId], references: [id])
-  manufacturerId    String
-  category          Category     @relation(fields: [categoryId], references: [id])
-  categoryId        String
+  id               String       @id @default(cuid())
+  name             String
+  status           Status       @relation(fields: [statusId], references: [id])
+  statusId         String
+  currentUser      User?        @relation(fields: [currentUserId], references: [id])
+  currentUserId    String?
+  location         Location?    @relation(fields: [locationId], references: [id])
+  locationId       String?
+  purchaseCost     String?
+  purchaseDate     DateTime?
+  purchaseSupplier Supplier?    @relation(fields: [supplierId], references: [id])
+  supplierId       String?
+  purchaseOrderId  BigInt?
+  serialNumber     String?
+  model            Model?       @relation(fields: [modelId], references: [id])
+  modelId          String?
+  image            String?
+  byod             Boolean
+  notes            String?
+  available        Boolean
+  manufacturer     Manufacturer @relation(fields: [manufacturerId], references: [id])
+  manufacturerId   String
+  category         Category     @relation(fields: [categoryId], references: [id])
+  categoryId       String
 }
 
 model Location {
   id               String     @id @default(cuid())
   name             String
-  parent_location  Location?  @relation("ParentChild", fields: [parentLocationId], references: [id])
+  parentLocation   Location?  @relation("ParentChild", fields: [parentLocationId], references: [id])
   parentLocationId String?
   children         Location[] @relation("ParentChild")
   devices          Device[]
@@ -132,62 +133,62 @@ model Location {
 }
 
 model Item {
-  id                String       @id @default(cuid())
-  name              String
-  status            Status       @relation(fields: [statusId], references: [id])
-  statusId          String
-  current_user      User?        @relation(fields: [current_userId], references: [id])
-  current_userId    String?
-  location          Location?    @relation(fields: [locationId], references: [id])
-  locationId        String?
-  purchase_cost     String?
-  purchase_date     DateTime?
-  purchase_supplier Supplier?    @relation(fields: [supplierId], references: [supplierid])
-  supplierId        String?
-  purchase_orderid  BigInt?
-  serial_number     String?
-  model             Model?       @relation(fields: [modelId], references: [id])
-  modelId           String?
-  image             String?
-  byod              Boolean
-  notes             String?
-  available         Boolean
-  manufacturer      Manufacturer @relation(fields: [manufacturerId], references: [id])
-  manufacturerId    String
-  category          Category     @relation(fields: [categoryId], references: [id])
-  categoryId        String
+  id               String       @id @default(cuid())
+  name             String
+  status           Status       @relation(fields: [statusId], references: [id])
+  statusId         String
+  currentUserId    String?
+  location         Location?    @relation(fields: [locationId], references: [id])
+  locationId       String?
+  purchaseCost     String?
+  purchaseDate     DateTime?
+  purchaseSupplier Supplier?    @relation(fields: [supplierId], references: [id])
+  supplierId       String?
+  purchaseOrderId  BigInt?
+  serialNumber     String?
+  model            Model?       @relation(fields: [modelId], references: [id])
+  modelId          String?
+  image            String?
+  byod             Boolean
+  notes            String?
+  available        Boolean
+  manufacturer     Manufacturer @relation(fields: [manufacturerId], references: [id])
+  manufacturerId   String
+  category         Category     @relation(fields: [categoryId], references: [id])
+  categoryId       String
+  User             User?        @relation(fields: [userId], references: [id])
+  userId           String?
 }
 
 model Supplier {
-  id             BigInt   @id @default(autoincrement())
-  supplierid     String   @unique
-  website        String
-  phone_number   String
-  contact_person String
-  post_adress    String
-  email_adress   String
-  devices        Device[]
-  items          Item[]
+  id            String   @id @default(cuid())
+  website       String
+  phoneNumber   String
+  contactPerson String
+  postAdress    String
+  emailAdress   String
+  devices       Device[]
+  items         Item[]
 }
 
 model Manufacturer {
-  id            String   @id @default(cuid())
-  name          String
-  image         String?
-  site_url      String?
-  support_url   String?
-  support_phone String?
-  support_email String
-  devices       Device[]
-  items         Item[]
-  models        Model[]
+  id           String   @id @default(cuid())
+  name         String
+  image        String?
+  siteUrl      String?
+  supportUrl   String?
+  supportPhone String?
+  supportEmail String
+  devices      Device[]
+  items        Item[]
+  models       Model[]
 }
 
 model Model {
   id             String       @id @default(cuid())
   name           String
   image          String?
-  model_number   String?
+  modelNumber    String?
   manufacturer   Manufacturer @relation(fields: [manufacturerId], references: [id])
   manufacturerId String
   category       Category     @relation(fields: [categoryId], references: [id])
@@ -206,12 +207,12 @@ model Category {
 }
 
 model Log {
-  id        String @id @default(cuid())
-  user      User   @relation(fields: [userId], references: [id])
-  userId    String
-  action    String
-  item      String
-  item_type String
+  id       String @id @default(cuid())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+  action   String
+  item     String
+  itemType String // device/item
 }
 
 model Status {

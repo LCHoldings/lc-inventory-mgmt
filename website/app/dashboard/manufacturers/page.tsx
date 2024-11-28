@@ -1,13 +1,15 @@
-"use client"
+'use client'
 
-import { useEffect } from "react"
-
+import { Suspense } from 'react'
+import { Manufacturer } from '@prisma/client'
 import { AppSidebar } from "@/components/app-sidebar"
 import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -15,24 +17,21 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import {  } from "next/navigation";
+import { ManufacturerList } from '@/components/manufacturers-list'
 
-import { useSession } from 'next-auth/react';
-import { useRouter } from "next/navigation"
+import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
 
 export default function Page() {
-    const { data: session } = useSession()
-    const router = useRouter();
+    const [manufacturers, setManufacturers] = useState<Manufacturer[]>([])
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            if (!session) {
-                router.push('/auth/signin')
-            }
-        }, 1000); // Adjust the delay as needed
+        fetch('/api/manufacturers')
+            .then(res => res.json())
+            .then(data => setManufacturers(data))
+    }, [])
 
-        return () => clearTimeout(timer);
-    }, [session, router])
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -44,21 +43,26 @@ export default function Page() {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="#">
+                                    <BreadcrumbLink>
                                         Dashboard
                                     </BreadcrumbLink>
+                                </BreadcrumbItem>
+                                <BreadcrumbSeparator className="hidden md:block" />
+                                <BreadcrumbItem>
+                                    <BreadcrumbPage>Manufacturers</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
                     </div>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                    <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                        <div className="aspect-video rounded-xl bg-muted/50" />
-                        <div className="aspect-video rounded-xl bg-muted/50" />
-                        <div className="aspect-video rounded-xl bg-muted/50" />
-                    </div>
-                    <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+                    <Suspense fallback={<div>Loading manufacturers...</div>}>
+                        <div className='flex flex-row justify-between'>
+                            <h1 className="text-2xl font-semibold">Manufacturers</h1>
+                            <Button className="btn btn-primary">Add Manufacturer <Plus /> </Button>
+                        </div>
+                        <ManufacturerList manufacturers={manufacturers} />
+                    </Suspense>
                 </div>
             </SidebarInset>
         </SidebarProvider>
