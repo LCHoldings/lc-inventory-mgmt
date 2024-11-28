@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { signIn } from "next-auth/webauthn"
-import { Button } from "./ui/button"
+import { Button } from "../ui/button"
 
 export default function Login() {
     const { data: session, status } = useSession()

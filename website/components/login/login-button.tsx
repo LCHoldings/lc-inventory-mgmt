@@ -1,6 +1,4 @@
-"use client"
-
-import { Button } from "./ui/button"
+import { Button } from "../ui/button"
 import { Loader2, LucideIcon } from 'lucide-react'
 
 import { useState } from "react"
