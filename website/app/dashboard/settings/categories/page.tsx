@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation';
 import { useEffect } from "react"
 import { useSession } from 'next-auth/react'
 import { redirect } from "next/navigation"
@@ -22,6 +23,7 @@ import { CategoryManagement } from "@/components/category-management"
 
 export default function Page() {
     const { data: session } = useSession()
+    const router = useRouter();
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -44,13 +46,13 @@ export default function Page() {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="/dashboard">
+                                    <BreadcrumbLink onClick={() => router.push('/dashboard')}>
                                         Dashboard
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="/dashboard/settings">
+                                    <BreadcrumbLink onClick={() => router.push('/dashboard/settings')}>
                                         Settings
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>

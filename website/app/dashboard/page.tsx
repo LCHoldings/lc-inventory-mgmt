@@ -15,7 +15,7 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { redirect } from "next/navigation";
+import {  } from "next/navigation";
 
 import { useSession } from 'next-auth/react';
 
@@ -24,7 +24,7 @@ export default function Page() {
     useEffect(() => {
         const timer = setTimeout(() => {
             if (!session) {
-                redirect('/auth/signin')
+                ('/auth/signin')
             }
         }, 1000); // Adjust the delay as needed
 

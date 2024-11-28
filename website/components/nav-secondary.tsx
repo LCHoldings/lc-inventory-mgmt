@@ -1,5 +1,6 @@
 import * as React from "react"
 import { type LucideIcon } from "lucide-react"
+import { useRouter } from 'next/navigation';
 
 import {
   SidebarGroup,
@@ -19,6 +20,7 @@ export function NavSecondary({
     icon: LucideIcon
   }[]
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+  const router = useRouter();
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
@@ -26,7 +28,7 @@ export function NavSecondary({
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild size="sm">
-                <a href={item.url}>
+                <a onClick={() => router.push(item.url)}>
                   <item.icon />
                   <span>{item.title}</span>
                 </a>

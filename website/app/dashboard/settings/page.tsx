@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from 'next/navigation';
 import { useEffect } from "react"
 
 import { AppSidebar } from "@/components/app-sidebar"
@@ -23,6 +24,7 @@ import { useSession } from 'next-auth/react';
 
 export default function Page() {
     const { data: session } = useSession()
+    const router = useRouter();
     useEffect(() => {
         const timer = setTimeout(() => {
             if (!session) {
@@ -43,7 +45,7 @@ export default function Page() {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="/dashboard">
+                                    <BreadcrumbLink onClick={() => router.push('/dashboard')}>
                                         Dashboard
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>

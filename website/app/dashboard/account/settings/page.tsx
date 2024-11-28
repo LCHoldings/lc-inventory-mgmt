@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -50,6 +51,7 @@ type UserFormValues = z.infer<typeof UserSchema>
 
 export default function AccountSettings() {
     const [isLoading, setIsLoading] = useState(false)
+    const router = useRouter()
 
     const form = useForm<UserFormValues>({
         resolver: zodResolver(UserSchema),
@@ -106,13 +108,13 @@ export default function AccountSettings() {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="/dashboard">
+                                    <BreadcrumbLink onClick={() => router.push('/dashboard')}>
                                         Dashboard
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="/dashboard/account">
+                                    <BreadcrumbLink onClick={() => router.push('/dashboard/account')}>
                                         Account
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>

@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from 'next/navigation';
 import { useState, useEffect } from "react"
 import { ChevronRight, type LucideIcon } from "lucide-react"
 
@@ -35,7 +36,7 @@ export function NavMain({
   }[],
 }) {
   const [collapsedState, setCollapsedState] = useState<{ [key: string]: boolean }>({})
-
+  const router = useRouter();
   useEffect(() => {
     const savedState = localStorage.getItem("collapsedState")
     if (savedState) {
@@ -66,7 +67,7 @@ export function NavMain({
           >
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip={item.title}>
-                <a href={item.url}>
+                <a onClick={() => router.push(item.url)}>
                   <item.icon />
                   <span>{item.title}</span>
                 </a>
@@ -87,7 +88,7 @@ export function NavMain({
                       {item.items?.map((subItem) => (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild>
-                            <a href={subItem.url}>
+                            <a onClick={() => router.push(subItem.url)}>
                               <span>{subItem.title}</span>
                             </a>
                           </SidebarMenuSubButton>

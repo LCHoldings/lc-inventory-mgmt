@@ -1,5 +1,6 @@
 'use server'
 
+import { redirect  } from 'next/navigation';
 import { Suspense } from 'react'
 import { prisma } from '@/prisma'
 import { Device } from '@prisma/client'
@@ -91,6 +92,7 @@ async function getUserName(userId: string) {
 }
 
 function DeviceList({ devices }: { devices: Device[] }) {
+ 
     return (
         <Table>
             <TableHeader>
@@ -133,12 +135,12 @@ function DeviceList({ devices }: { devices: Device[] }) {
                             <StatusBadge statusId={device.statusId} />
                         </TableCell>
                         <TableCell>
-                            <a href={getLocationURL(device?.locationId || "") || "#"}>
+                            <a onClick={() => redirect(getLocationURL(device?.locationId || "") || "#")}>
                                 {getLocationName(device?.locationId || "1") || 'N/A'}
                             </a>
                         </TableCell>
                         <TableCell>
-                            <a href={getUserURL(device?.current_userId || "")}>
+                            <a onClick={() => redirect(getUserURL(device?.current_userId || ""))}>
                                 {getUserName(device?.current_userId || 'N/A') || 'N/A'}
                             </a>
                         </TableCell>
@@ -166,7 +168,7 @@ export default async function Page() {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="/dashboard">
+                                    <BreadcrumbLink onClick={() => redirect('/dashboard')}>
                                         Dashboard
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>

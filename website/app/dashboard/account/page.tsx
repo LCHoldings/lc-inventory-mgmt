@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
+import { useRouter } from 'next/navigation';
 
 import { AppSidebar } from "@/components/app-sidebar"
 import {
@@ -24,6 +25,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function Page() {
     const { data: session } = useSession()
+    const router = useRouter();
+
     useEffect(() => {
         const timer = setTimeout(() => {
             if (!session) {
@@ -51,7 +54,7 @@ export default function Page() {
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink href="/dashboard">
+                                    <BreadcrumbLink  onClick={() => router.push('/dashboard')}>
                                         Dashboard
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
@@ -77,7 +80,7 @@ export default function Page() {
                         </div>
                     </div>
                 </div>
-                <a href="/dashboard/account/settings">Settings</a>
+                <a  onClick={() => router.push('/dashboard/account/settings')}>Settings</a>
             </SidebarInset>
         </SidebarProvider>
     )
