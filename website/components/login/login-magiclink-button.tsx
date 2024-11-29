@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function MagicLinkButton() {
+export default function MagicLinkButton({ signInFunction }: { signInFunction: any }) {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -13,19 +13,7 @@ export default function MagicLinkButton() {
     setIsLoading(true);
     console.log("Email:", email);
     try {
-      const response = await fetch("/api/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      if (response.ok) {
-        console.log("Magic link sent to:", email);
-      } else {
-        console.error("Failed to send magic link");
-      }
+      signInFunction("email", { email });
     } catch (error) {
       console.error("Error:", error);
     } finally {

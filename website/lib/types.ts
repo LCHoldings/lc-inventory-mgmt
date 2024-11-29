@@ -16,4 +16,4 @@ export type SignInPageErrorParam =
     | "CredentialsSignin"
     | "SessionRequired"
     | "MissingCSRF"
-    | "UserSuspended"
+    | "AccessDenied"

@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { type DefaultSession } from "next-auth";
 //import authConfig from "./auth.config"
 
 import { PrismaClient } from "@prisma/client";
@@ -10,11 +10,24 @@ import Passkey from "next-auth/providers/passkey";
 
 const prisma = new PrismaClient();
 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      suspended: boolean
+    } & DefaultSession["user"]
+  }
+
+  interface User {
+    suspended: boolean
+  }
+}
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
-  session: { strategy: "jwt" },
+  session: { strategy: "database" },
   pages: {
     signIn: "/auth/signin",
+    error: "/auth/signin"
   },
   providers: [
     GitHub,
@@ -25,5 +38,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Passkey,
   ],
   experimental: { enableWebAuthn: true },
+  callbacks: {
+    signIn({ profile, user }) {
+      if (profile) {
+        return !user?.suspended
+      } else return false
+    }
+  },
   //...authConfig,
 });

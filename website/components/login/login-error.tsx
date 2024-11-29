@@ -12,7 +12,7 @@ export default function LoginError({ error }: { error: string }) {
                     </div>
                 </div>
                 <div className="flex-grow">
-                    <CardTitle className="text-lg font-semibold text-foreground">{error}</CardTitle>
+                    <CardTitle className="text-lg font-semibold text-foreground">{error.split(/(?=[A-Z])/).join(' ')}</CardTitle>
                     <CardDescription className="text-sm text-muted-foreground">
                         {signinErrors[error as keyof typeof signinErrors] || signinErrors.default}
                     </CardDescription>
