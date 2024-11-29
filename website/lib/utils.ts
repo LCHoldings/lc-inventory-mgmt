@@ -1,7 +1,9 @@
 import { SignInPageErrorParam } from './types';
 import { prisma } from "@/prisma"
+import { NextRequest, NextResponse } from 'next/server'
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { Session } from "next-auth"
 
 export const signinErrors: Record<SignInPageErrorParam | "default", string> = {
   default: "Unable to sign in. Please try again.",

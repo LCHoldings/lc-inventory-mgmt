@@ -42,7 +42,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn({ profile, user }) {
       if (profile) {
         return !user?.suspended
-      } else return false
+      } else return true
     }
   },
   //...authConfig,

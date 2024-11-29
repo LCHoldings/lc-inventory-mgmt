@@ -10,22 +10,31 @@ export default function LoginButton({
   id,
   label,
   Icon,
-  handleLogin,
 }: {
   id: string;
   label: string;
   Icon: LucideIcon;
-  handleLogin: (id: LoginMethod) => void;
 }) {
-  const [isLoading, setIsLoading] = useState<LoginMethod | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
+  async function Login() {
+    setIsLoading(true);
+
+    try {
+      await signIn('magic-link', { email });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
   return (
     <>
       <Button
         key={id}
         variant="outline"
         className="w-full flex justify-center items-center relative"
-        onClick={() => handleLogin(id as LoginMethod)}
+        onClick={() => Login()}
         disabled={isLoading !== null}
       >
         <span
