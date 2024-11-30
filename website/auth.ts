@@ -1,5 +1,4 @@
 import NextAuth, { type DefaultSession } from "next-auth";
-//import authConfig from "./auth.config"
 
 import { PrismaClient } from "@prisma/client";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -13,12 +12,12 @@ const prisma = new PrismaClient();
 declare module "next-auth" {
   interface Session {
     user: {
-      suspended: boolean
-    } & DefaultSession["user"]
+      suspended: boolean;
+    } & DefaultSession["user"];
   }
 
   interface User {
-    suspended: boolean
+    suspended: boolean;
   }
 }
 
@@ -27,7 +26,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "database" },
   pages: {
     signIn: "/auth/signin",
-    error: "/auth/signin"
+    error: "/auth/signin",
   },
   providers: [
     GitHub,
@@ -41,9 +40,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     signIn({ profile, user }) {
       if (profile) {
-        return !user?.suspended
-      } else return true
-    }
+        return !user?.suspended;
+      } else return true;
+    },
   },
-  //...authConfig,
 });

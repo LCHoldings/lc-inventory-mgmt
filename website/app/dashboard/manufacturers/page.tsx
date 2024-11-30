@@ -1,4 +1,4 @@
-'use client'
+
 
 import { Suspense } from 'react'
 import { Manufacturer } from '@prisma/client'
@@ -19,18 +19,12 @@ import {
 } from "@/components/ui/sidebar"
 import { ManufacturerList } from '@/components/manufacturers-list'
 
-import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 
 export default function Page() {
-    const [manufacturers, setManufacturers] = useState<Manufacturer[]>([])
 
-    useEffect(() => {
-        fetch('/api/manufacturers')
-            .then(res => res.json())
-            .then(data => setManufacturers(data))
-    }, [])
+   
 
     return (
         <SidebarProvider>
@@ -61,7 +55,7 @@ export default function Page() {
                             <h1 className="text-2xl font-semibold">Manufacturers</h1>
                             <Button className="btn btn-primary">Add Manufacturer <Plus /> </Button>
                         </div>
-                        <ManufacturerList manufacturers={manufacturers} />
+                        <ManufacturerList/>
                     </Suspense>
                 </div>
             </SidebarInset>

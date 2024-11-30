@@ -1,4 +1,3 @@
-'use server'
 
 import { Suspense } from 'react'
 import { prisma } from '@/prisma'

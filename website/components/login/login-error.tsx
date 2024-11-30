@@ -1,6 +1,6 @@
 "use client"
 
-import { signinErrors } from '@/lib/utils'
+import { signinErrors } from '@/lib/responses'
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card'
 import { AlertCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'

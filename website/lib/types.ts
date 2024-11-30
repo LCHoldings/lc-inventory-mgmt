@@ -17,3 +17,13 @@ export type SignInPageErrorParam =
     | "SessionRequired"
     | "MissingCSRF"
     | "AccessDenied"
+
+export type APIResponseParam =
+    | "NotAuthenticated"
+    | "Forbidden"
+    | "FailedToFetch"
+    | "FailedToCreate"
+    | "FailedToUpdate"
+    | "FailedToDelete"
+    | "InvalidAction"
+    | "NoParams"

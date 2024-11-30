@@ -108,7 +108,7 @@ model Device {
   purchaseDate     DateTime?
   purchaseSupplier Supplier?    @relation(fields: [supplierId], references: [id])
   supplierId       String?
-  purchaseOrderId  BigInt?
+  purchaseOrderId  String?
   serialNumber     String?
   model            Model?       @relation(fields: [modelId], references: [id])
   modelId          String?
@@ -144,7 +144,7 @@ model Item {
   purchaseDate     DateTime?
   purchaseSupplier Supplier?    @relation(fields: [supplierId], references: [id])
   supplierId       String?
-  purchaseOrderId  BigInt?
+  purchaseOrderId  String?
   serialNumber     String?
   model            Model?       @relation(fields: [modelId], references: [id])
   modelId          String?

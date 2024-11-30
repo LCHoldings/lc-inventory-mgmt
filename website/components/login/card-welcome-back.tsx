@@ -1,8 +1,18 @@
+"use client"
+
 import { Loader2 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardTitle } from '../ui/card'
+import { useRouter } from 'next/navigation'
 
 
 export default function CardWelcomeBack({ name }: { name: string }) {
+    const router = useRouter()
+
+    // Redirect to dashboard after 2 seconds
+    setTimeout(() => {
+        router.push('/dashboard')
+    }, 2000)
+
     return (
         <Card className="mx-auto max-w-sm w-full transition-all duration-300 hover:shadow-lg">
             <CardContent className="flex items-center space-x-4 p-4">
