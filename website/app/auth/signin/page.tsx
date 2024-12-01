@@ -1,15 +1,13 @@
 import React from "react";
 import { CardContent } from "@/components/ui/card";
-import { ThemeToggle } from "@/components/theme-toggle";
 import LoginError from "@/components/login/login-error";
 import CardWelcomeBack from "@/components/login/card-welcome-back";
 import LoginCardWrapper from "@/components/login/login-card-wrapper";
 import MagicLinkButton from "@/components/login/login-magiclink-button";
 import LoginButton from "@/components/login/login-button";
 import { auth } from "@/auth";
-import { redirect } from 'next/navigation'
 
-type LoginMethod = "magic-link" | "github" | "apple" | "passkey";
+
 
 const loginMethods = [
   { id: "github", label: "Login with GitHub" },
@@ -35,9 +33,6 @@ export default async function Page() {
           </CardContent>
         </LoginCardWrapper>
       )}
-      <div className="bottom-4 right-4 absolute">
-        <ThemeToggle />
-      </div>
     </div>
   );
 }

@@ -71,12 +71,14 @@ export const PUT = auth(async function PUT(req) {
     try {
         const { statusid, name, color, default: isDefault } = await req.json()
 
+        console.log("name", name, "color", color, "default", isDefault, "statusid", statusid)
+
         const checkDefault = await prisma.status.findFirst({
             where: {
                 default: true,
             },
         })
-
+        console.log("statusid", statusid, "checkDefault", checkDefault?.id)
         if (isDefault === true && checkDefault?.id !== statusid) {
             return NextResponse.json({ error: 'Default status already exists' }, { status: 400 })
         }

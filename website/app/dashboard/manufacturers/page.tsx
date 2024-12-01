@@ -17,8 +17,8 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { ManufacturerList } from '@/components/manufacturers-list'
-
+import ManufacturerList from '@/components/manufacturer/manufacturers-list'
+import { ManufacturerAddModal } from '@/components/manufacturer/manufactuer-add-model'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 
@@ -53,7 +53,7 @@ export default function Page() {
                     <Suspense fallback={<div>Loading manufacturers...</div>}>
                         <div className='flex flex-row justify-between'>
                             <h1 className="text-2xl font-semibold">Manufacturers</h1>
-                            <Button className="btn btn-primary">Add Manufacturer <Plus /> </Button>
+                            <ManufacturerAddModal />
                         </div>
                         <ManufacturerList/>
                     </Suspense>

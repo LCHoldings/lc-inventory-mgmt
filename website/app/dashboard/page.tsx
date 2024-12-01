@@ -1,7 +1,3 @@
-"use client"
-
-import { useEffect } from "react"
-
 import { AppSidebar } from "@/components/app-sidebar"
 import {
     Breadcrumb,
@@ -15,24 +11,15 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import {  } from "next/navigation";
 
-import { useSession } from 'next-auth/react';
-import { useRouter } from "next/navigation"
+import DevicePie from "@/components/statistics/device-pie"
+import ItemPie from "@/components/statistics/item-pie"
+import { redirect } from "next/navigation"
+import { auth } from "@/auth"
 
 export default function Page() {
-    const { data: session } = useSession()
-    const router = useRouter();
+    const session = auth()
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (!session) {
-                router.push('/auth/signin')
-            }
-        }, 1000); // Adjust the delay as needed
-
-        return () => clearTimeout(timer);
-    }, [session, router])
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -54,8 +41,8 @@ export default function Page() {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                        <div className="aspect-video rounded-xl bg-muted/50" />
-                        <div className="aspect-video rounded-xl bg-muted/50" />
+                        <DevicePie />
+                        <ItemPie />
                         <div className="aspect-video rounded-xl bg-muted/50" />
                     </div>
                     <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />

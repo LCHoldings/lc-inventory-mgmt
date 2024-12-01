@@ -128,7 +128,6 @@ export function StatusManagement() {
             })
         }
     }
-
     return (
         
         <div className="space-y-8">
@@ -199,7 +198,7 @@ export function StatusManagement() {
                     </TableHeader>
                     <TableBody>
                         {statuses.map((status) => (
-                            <TableRow key={status.statusid}>
+                            <TableRow key={status.id}>
                                 <TableCell>{status.name}</TableCell>
                                 <TableCell>
                                     <div className="flex items-center space-x-2">
@@ -215,7 +214,7 @@ export function StatusManagement() {
                                     <Button
                                         variant="destructive"
                                         size="icon"
-                                        onClick={() => deleteStatus(status.statusid)}
+                                        onClick={() => deleteStatus(status.id)}
                                     >
                                         <Trash2 className="h-4 w-4" />
                                         <span className="sr-only">Delete status</span>

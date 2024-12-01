@@ -5,9 +5,6 @@ import { checkPermission } from "@/lib/utils"
 import { APIResponses } from "@/lib/responses"
 
 export const GET = auth(async function GET(req) {
-    console.log(req.nextUrl.searchParams.get('action'));
-    console.log(req.nextUrl.searchParams.get('manufacturerId'));
-    
     const action = req.nextUrl.searchParams.get('action')
     const manufacturerId = req.nextUrl.searchParams.get('manufacturerId')
 
@@ -32,6 +29,7 @@ export const GET = auth(async function GET(req) {
     } else if (action === 'getManufacturerItems') {
         try {
             const items = await prisma.item.findMany({ where: { manufacturerId: (manufacturerId || "") } })
+            console.log(items.length)
             return NextResponse.json({ itemCount: items.length })
         } catch {
             return NextResponse.json({ error: APIResponses["FailedToFetch"] }, { status: 500 })
@@ -39,6 +37,7 @@ export const GET = auth(async function GET(req) {
     } else if (action === 'getManufacturerDevices') {
         try {
             const devices = await prisma.device.findMany({ where: { manufacturerId: (manufacturerId || "") } })
+            console.log(devices.length)
             return NextResponse.json({ deviceCount: devices.length })
         } catch (error) {
             console.error(error)
@@ -96,10 +95,10 @@ export const PUT = auth(async function PUT(req) {
         return NextResponse.json({ error: APIResponses["NotAuthenticated"] }, { status: 401 })
     }
     try {
-        const { manufacturerId, name, image, siteUrl, supportEmail, supportPhone, supportUrl } = await req.json()
+        const { id, name, image, siteUrl, supportEmail, supportPhone, supportUrl } = await req.json()
 
         const status = await prisma.manufacturer.update({
-            where: { id: manufacturerId },
+            where: { id },
             data: {
                 name,
                 image,

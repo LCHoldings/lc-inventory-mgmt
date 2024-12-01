@@ -55,10 +55,11 @@ export function EditStatusCard({ status, setCardOpen }: { status: Status, setCar
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
+            console.log(status.statusid)
             const response = await fetch('/api/statuses', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...values, statusid: status.statusid }),
+                body: JSON.stringify({ ...values, statusid: status.id }),
             })
             if (!response.ok) {
                 const getError = await response.text()
@@ -83,8 +84,8 @@ export function EditStatusCard({ status, setCardOpen }: { status: Status, setCar
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
             <Card className="w-[400px]">
                 <CardHeader>
-                    <CardTitle>Edit Status {status.statusid}</CardTitle>
-                    <CardDescription>Change color, default and name.</CardDescription>
+                    <CardTitle>Edit Status {status.name}</CardTitle>
+                    <CardDescription>Change name, color and if its default.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>

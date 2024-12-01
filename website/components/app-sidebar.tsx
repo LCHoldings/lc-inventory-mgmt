@@ -31,6 +31,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 
 import { useSession } from "next-auth/react"
+import Image from "next/image"
 
 const data = {
   navMain: [
@@ -136,7 +137,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <a href="#">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
                   {session ? (
-                    <Command className="size-4" />
+                   
+                    <Image src="https://cloud-i7kx3y785-hack-club-bot.vercel.app/0small_lcholdings.png" alt="logo" width={50} height={50} className="p-1" />
                   ) : (
                     <Skeleton className="size-8 rounded-lg" />
                   )}
