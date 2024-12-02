@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image'
+import { SquareX } from 'lucide-react'
 
 const ImageCellRenderer = (props: any) => {
   return (
@@ -7,9 +8,7 @@ const ImageCellRenderer = (props: any) => {
       {props.value ? (
         <Image src={props.value} alt="Manufacturer" width={60} height={60} className="rounded-sm" />
       ) : (
-        <div className="w-10 h-10 text-gray-300">
-          <p>No Image</p>
-        </div>
+        <SquareX className='size-14' />
       )}
     </div>
   );

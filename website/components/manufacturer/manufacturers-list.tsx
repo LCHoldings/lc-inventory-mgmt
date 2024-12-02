@@ -13,6 +13,7 @@ import { Manufacturer } from "@prisma/client";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import ManufacturerEditSheet from "./manufacturer-edit-sheet";
+import ManufacturerDeleleDialog from "./manufacturer-delete-dailog";
 import { themeQuartz } from '@ag-grid-community/theming';
 import ImageCellRenderer from '@/components/Image-cell-renderer';
 const myTheme = themeQuartz
@@ -73,8 +74,6 @@ function getItemsForManufacturer(manufacturerId: string): Promise<number> {
             return 0;
         });
 }
-
-// Row Data Interface
 interface IRow {
     image: string;
     name: string;
@@ -85,7 +84,6 @@ interface IRow {
     actions: string;
 }
 
-// Create new GridExample component
 export default function ManufacturerList() {
     const [items, setItems] = useState<{ [key: string]: number }>({});
     const [devices, setDevices] = useState<{ [key: string]: number }>({});
@@ -156,7 +154,24 @@ export default function ManufacturerList() {
         { headerName: 'Email', field: 'supportEmail' },
         { headerName: 'Phone', field: 'supportPhone' },
         { headerName: 'Support URL', field: 'supportUrl' },
-        { headerName: 'Actions', field: 'actions', sortable: false, filter: false },
+        {
+            headerName: 'Button',
+            field: 'actions',
+            cellRenderer: function ButtonCellRenderer(params: any) {
+                return (
+                    <>
+                        <ManufacturerEditSheet
+                            manufacturer={params.data}
+                            callback={fetchManufacturersData}
+                        />
+                        <ManufacturerDeleleDialog
+                            manufacturer={params.data}
+                            callback={fetchManufacturersData}
+                        />
+                    </>
+                );
+            },
+        },
     ]);
 
     const frameworkComponents = {

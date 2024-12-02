@@ -19,8 +19,7 @@ import {
 } from "@/components/ui/sidebar"
 import ManufacturerList from '@/components/manufacturer/manufacturers-list'
 import { ManufacturerAddModal } from '@/components/manufacturer/manufactuer-add-model'
-import { Button } from '@/components/ui/button'
-import { Plus } from 'lucide-react'
+
 
 export default function Page() {
 

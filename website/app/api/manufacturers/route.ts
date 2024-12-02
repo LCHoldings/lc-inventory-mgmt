@@ -79,9 +79,9 @@ export const DELETE = auth(async function DELETE(req) {
         return NextResponse.json({ error: APIResponses["NotAuthenticated"] }, { status: 401 })
     }
     try {
-        const { manufacturerId } = await req.json()
+        const { id } = await req.json()
         await prisma.manufacturer.delete({
-            where: { id: manufacturerId },
+            where: { id: id },
         })
         return NextResponse.json({ success: true })
     } catch (error) {
