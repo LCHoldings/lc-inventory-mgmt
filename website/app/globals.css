@@ -2,73 +2,133 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
+/** Ultra Light */
+@font-face {
+  font-family: "San Francisco";
+  font-weight: 100;
+  src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-ultralight-webfont.woff");
 }
 
+/** Thin */
+@font-face {
+  font-family: "San Francisco";
+  font-weight: 200;
+  src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-thin-webfont.woff");
+}
+
+/** Regular */
+@font-face {
+  font-family: "San Francisco";
+  font-weight: 400;
+  src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff");
+}
+
+/** Medium */
+@font-face {
+  font-family: "San Francisco";
+  font-weight: 500;
+  src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-medium-webfont.woff");
+}
+
+/** Semi Bold */
+@font-face {
+  font-family: "San Francisco";
+  font-weight: 600;
+  src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-semibold-webfont.woff");
+}
+
+/** Bold */ 
+@font-face {
+  font-family: "San Francisco";
+  font-weight: 700;
+  src: url("https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-bold-webfont.woff");
+}
+
+* {
+    font-family: "San Francisco"   
+}
+
+h1 { font-weight: 700; }
+h2 { font-weight: 600; }
+h3 { font-weight: 500; }
+p { font-weight: 400; }
+p.thin { font-weight: 200; }
+p.ultralight { font-weight: 100; }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --background: 0 0% 98.04%;
+    --foreground: 228 0% 0%;
+    --muted: 228 13% 94%;
+    --muted-foreground: 228 11% 50%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.75rem;
-    --chart-1: 221.2 83.2% 53.3%;
-    --chart-2: 212 95% 68%;
-    --chart-3: 216 92% 60%;
-    --chart-4: 210 98% 78%;
-    --chart-5: 212 97% 87%;
+    --popover-foreground: 228 39% 30%;
+    --card: 0 100% 99.56%;
+    --card-foreground: 228 0% 0%;
+    --border: 228 13% 88%;
+    --input: 228 13% 88%;
+    --primary: 221 57% 35%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 201 71% 48%;
+    --secondary-foreground: 0 0% 100%;
+    --accent: 201 71% 48%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 1 56% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 105 56% 55%;
+    --success-foreground: 105 56% 15%;
+    --warning: 38 61% 41%;
+    --warning-foreground: 0 0% 100%;
+    --info: 205 56% 55%;
+    --info-foreground: 0 0% 0%;
+    --ring: 221 57% 35%;
+    --chart-1: 221 57% 35%;
+    --chart-2: 201 71% 48%;
+    --chart-3: 228 39% 30%;
+    --chart-4: 201 71% 48%;
+    --chart-5: 221 57% 38%;
+    --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-    --chart-1: 221.2 83.2% 53.3%;
-    --chart-2: 212 95% 68%;
-    --chart-3: 216 92% 60%;
-    --chart-4: 210 98% 78%;
-    --chart-5: 212 97% 87%;
+    --background: 221 40% 10%;
+    --foreground: 0 0% 95%;
+    --muted: 221 40% 15%;
+    --muted-foreground: 0 0% 80%;
+    --popover: 221 40% 10%;
+    --popover-foreground: 0 0% 95%;
+    --card: 221 40% 10%;
+    --card-foreground: 0 0% 95%;
+    --border: 221 40% 20%;
+    --input: 221 40% 20%;
+    --primary: 201 71% 48%;
+    --primary-foreground: 0 0% 95%;
+    --secondary: 221 57% 35%;
+    --secondary-foreground: 0 0% 95%;
+    --accent: 201 71% 48%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 13 56% 20%;
+    --destructive-foreground: 13 56% 80%;
+    --success: 136 56% 20%;
+    --success-foreground: 136 56% 80%;
+    --warning: 33 61% 22%;
+    --warning-foreground: 33 61% 82%;
+    --info: 210 56% 20%;
+    --info-foreground: 210 56% 80%;
+    --ring: 201 71% 48%;
+    --chart-1: 221 57% 35%;
+    --chart-2: 201 71% 48%;
+    --chart-3: 228 39% 30%;
+    --chart-4: 201 71% 48%;
+    --chart-5: 221 57% 38%;
   }
 }
-
 
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
