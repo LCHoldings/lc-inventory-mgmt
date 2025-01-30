@@ -17,6 +17,7 @@
     "@ag-grid-community/theming": "^32.3.3",
     "@auth/prisma-adapter": "^2.7.4",
     "@hookform/resolvers": "^3.9.1",
+    "@neondatabase/serverless": "^0.10.4",
     "@prisma/client": "^6.0.0",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-avatar": "^1.1.1",
@@ -39,6 +40,8 @@
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.39.1",
     "lucide-react": "^0.456.0",
     "next": "^14.2.18",
     "next-auth": "^5.0.0-beta.25",
@@ -57,11 +60,13 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "drizzle-kit": "^0.30.4",
+    "drizzle-prisma-generator": "^0.1.7",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "postcss": "^8",
-    "prisma": "^6.0.0",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.19.2",
     "typescript": "^5"
   }
 }
