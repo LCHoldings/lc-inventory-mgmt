@@ -65,7 +65,7 @@ export const Item = pgTable('items', {
     supplierId: uuid('supplier_id').references(() => Supplier.id),
     purchaseOrderId: varchar('purchase_order_id'),
     serialNumber: varchar('serial_number'),
-    modelId: varchar('model_id').references(() => Model.id),
+    modelId: uuid('model_id').references(() => Model.id),
     image: varchar('image'),
     byod: boolean('byod'),
     notes: text('notes'),
