@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect } from "react"
 import { useRouter } from 'next/navigation';
 
 import { AppSidebar } from "@/components/app-sidebar"
@@ -20,27 +19,24 @@ import {
 } from "@/components/ui/sidebar"
 import { redirect } from "next/navigation";
 
-import { useSession } from 'next-auth/react';
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useUser, useAuth } from '@clerk/nextjs';
 
 export default function Page() {
-    const { data: session } = useSession()
+    const { user } = useUser();
+    const { isLoaded } = useAuth();
     const router = useRouter();
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (!session) {
-                redirect('/auth/signin')
-            }
-        }, 1000); // Adjust the delay as needed
+    if (isLoaded && !user?.id) {
+        redirect('/signin')
+    }
 
-        return () => clearTimeout(timer);
-    }, [session])
 
     const userData = {
-        name: session?.user?.name || "John Doe",
-        email: session?.user?.email || "",
-        image: session?.user?.image || "",
+        name: user?.fullName || "John Doe",
+        email: user?.primaryEmailAddress?.emailAddress || "",
+        image: user?.imageUrl || "",
     }
 
     return (

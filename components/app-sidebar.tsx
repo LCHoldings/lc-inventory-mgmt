@@ -3,12 +3,10 @@
 import * as React from "react"
 import {
   Mouse,
-  Command,
   Frame,
   LifeBuoy,
   Map,
   PieChart,
-  Send,
   Settings2,
   Laptop,
   Hammer,
@@ -24,14 +22,9 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { Skeleton } from "@/components/ui/skeleton"
 
-import { useSession } from "next-auth/react"
-import Image from "next/image"
+import { OrganizationSwitcher } from "./organization-switcher"
 
 const data = {
   navMain: [
@@ -126,38 +119,10 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: session } = useSession()
-
   return (
     <Sidebar className="border-r" collapsible="icon" {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
-                  {session ? (
-                   
-                    <Image src="https://cloud-i7kx3y785-hack-club-bot.vercel.app/0small_lcholdings.png" alt="logo" width={50} height={50} className="p-1" />
-                  ) : (
-                    <Skeleton className="size-8 rounded-lg" />
-                  )}
-                </div>
-                {session ? (
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">LCHoldings</span>
-                    <span className="truncate text-xs">Yap yap</span>
-                  </div>
-                ) : (
-                  <div className="grid flex-1 gap-1.5 text-left text-sm leading-tight">
-                    <Skeleton className="h-3 w-32 rounded-lg" />
-                    <Skeleton className="h-2 w-24 rounded-lg" />
-                  </div>
-                )}
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <OrganizationSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

@@ -60,7 +60,7 @@ export default function ManufacturerEditSheet({ manufacturer, callback }: Manufa
           }
           return res.json();
         })
-        .then(data => {
+        .then(() => {
           callback()
           toast({
             title: 'Success',

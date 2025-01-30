@@ -7,10 +7,8 @@ import React, {
     useMemo,
     useEffect
 } from 'react';
-import { ColDef, RowSelectionOptions, GridReadyEvent } from 'ag-grid-community';
-import { AlertCircle } from "lucide-react";
-import { Manufacturer } from "@prisma/client";
-import Image from "next/image";
+import { ColDef, RowSelectionOptions } from 'ag-grid-community';
+import { Manufacturer } from "@prisma/client"; // Use drizzle types
 import { useToast } from "@/hooks/use-toast";
 import ManufacturerEditSheet from "./manufacturer-edit-sheet";
 import ManufacturerDeleleDialog from "./manufacturer-delete-dailog";
@@ -85,9 +83,6 @@ interface IRow {
 }
 
 export default function ManufacturerList() {
-    const [items, setItems] = useState<{ [key: string]: number }>({});
-    const [devices, setDevices] = useState<{ [key: string]: number }>({});
-    const [isLoading, setIsLoading] = useState(true);
     const [rowData, setRowData] = useState<IRow[]>([]);
     const { toast } = useToast();
 
@@ -134,7 +129,7 @@ export default function ManufacturerList() {
 
     useEffect(() => {
         fetchManufacturersData();
-    }, []);
+    });
 
     const rowSelection = useMemo<RowSelectionOptions | 'single' | 'multiple'>(() => {
         return {

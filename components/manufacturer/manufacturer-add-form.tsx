@@ -1,17 +1,9 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-import type { Manufacturer } from '@prisma/client'
+import type { Manufacturer } from '@prisma/client' // Use drizzle types
 interface ManufacturerAddFormProps {
   onSave: (manufacturer: Manufacturer) => void
   onCancel: () => void

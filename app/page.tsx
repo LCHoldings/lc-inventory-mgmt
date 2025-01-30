@@ -1,9 +1,7 @@
 "use client"
 
-import PasskeyLogin from '@/components/passkey-login';
-
 import { useRouter } from "next/navigation";
-
+import { useAuth, useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,17 +19,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useSession } from 'next-auth/react';
 import { ChevronDown } from 'lucide-react';
 
 const routes = [
   { id: '/dashboard', label: 'Dashboard' },
-  { id: '/auth/signin', label: 'Login' },
+  { id: '/signin', label: 'Login' },
+  { id: '/signup', label: 'Signup' },
 ];
 
 export default function Home() {
-  const { data:session } = useSession();
   const router = useRouter();
+  const { isLoaded } = useAuth()
+  const { user } = useUser()
+
+  if (!isLoaded) {
+    return <div>Loading...</div>
+  }
+
+  console.log(user)
+
   return (
     <div className="flex flex-col gap-4 h-screen w-full items-center justify-center px-4 bg-gradient-to-br from-primary/20 to-secondary/20">
       <Card>
@@ -39,10 +45,9 @@ export default function Home() {
           <CardTitle>Home</CardTitle>
         </CardHeader>
         <CardContent>
-          <pre>{JSON.stringify(session, null, 2)}</pre>
+          <pre>ok</pre>
         </CardContent>
         <CardFooter className="gap-2">
-          <PasskeyLogin />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">

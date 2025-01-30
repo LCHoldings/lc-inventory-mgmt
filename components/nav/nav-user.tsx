@@ -12,7 +12,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-import { useSession, signOut } from "next-auth/react"
+import { useAuth, useUser } from '@clerk/nextjs';
 
 import {
   DropdownMenu,
@@ -32,28 +32,24 @@ import {
 } from "@/components/ui/sidebar"
 
 import { Skeleton } from "@/components/ui/skeleton"
-import { useEffect } from 'react';
 
 export function NavUser() {
   const { isMobile } = useSidebar()
-  const { data: session } = useSession()
+  const { isLoaded, signOut } = useAuth()
+  const { user } = useUser()
   const router = useRouter();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!session) {
-        router.push('/auth/signin')
-      }
-    }, 1000); // Adjust the delay as needed
 
-    return () => clearTimeout(timer);
-  }, [session, router])
+  if (!user?.id && isLoaded) {
+    router.push('/signin')
+  }
 
   const userData = {
-    name: session?.user?.name || "John Doe",
-    email: session?.user?.email || "john.doe@example.com",
-    avatar: session?.user?.image || "",
+    name: user?.fullName || "John Doe",
+    email: user?.primaryEmailAddress?.emailAddress || "john.doe@example.com",
+    avatar: user?.imageUrl || "",
   }
+
 
   return (
     <SidebarMenu>
@@ -64,7 +60,7 @@ export function NavUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              {session ? (
+              {isLoaded ? (
                 <Avatar className="h-8 w-8 rounded-sm">
                   <AvatarImage src={userData.avatar} alt={userData.name} />
                   <AvatarFallback className="rounded-sm">
@@ -75,7 +71,7 @@ export function NavUser() {
                 <Skeleton className="h-8 w-8 rounded-sm" />
               )}
 
-              {session ? (
+              {isLoaded ? (
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{userData.name}</span>
                   <span className="truncate text-xs">{userData.email}</span>
@@ -97,7 +93,7 @@ export function NavUser() {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                {session ? (
+                {isLoaded ? (
                   <Avatar className="h-8 w-8 rounded-sm">
                     <AvatarImage src={userData.avatar} alt={userData.name} />
                     <AvatarFallback className="rounded-sm">
@@ -108,7 +104,7 @@ export function NavUser() {
                   <Skeleton className="h-8 w-8 rounded-sm" />
                 )}
 
-                {session ? (
+                {isLoaded ? (
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">{userData.name}</span>
                     <span className="truncate text-xs">{userData.email}</span>

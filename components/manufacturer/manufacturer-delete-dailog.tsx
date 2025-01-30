@@ -14,12 +14,13 @@ import {
 } from "@/components/ui/dialog"
 import { toast } from "@/hooks/use-toast"
 
-import { Manufacturer } from "@prisma/client"
+import type { Manufacturer } from "@prisma/client" // Use drizzle types
 
 interface DialogDeleteButtonProps {
     callback: () => void
     manufacturer: Manufacturer
 }
+
 
 export default function DialogDeleteButton({ manufacturer, callback }: DialogDeleteButtonProps) {
     const [open, setOpen] = useState(false)
@@ -43,10 +44,11 @@ export default function DialogDeleteButton({ manufacturer, callback }: DialogDel
                     }
                     return res.json();
                 })
-                .then(data => {
+                .then(() => {
                     callback()
                     toast({
                         title: 'Success',
+
                         description: 'Manufacturer delete successfully',
                         variant: 'default'
                     });

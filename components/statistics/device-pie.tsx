@@ -1,10 +1,19 @@
+/*
 import DashPieChart from "./dash-pie-chart";
 import { ChartConfig } from "@/components/ui/chart";
 import { prisma } from "@/prisma";
+*/
 
 export default async function DevicePie() {
+    return (
+        <div>
+            <h1>Device Pie</h1>
+        </div>
+    )
+    /*
     const statusData = await prisma.status.findMany();
     const chartData = [];
+
     const chartConfig: ChartConfig = {};
 
     for (const status of statusData) {
@@ -33,5 +42,5 @@ export default async function DevicePie() {
 
     return (
         <DashPieChart chartData={chartData} chartConfig={chartConfig} title="Devices" description="This pie chart shows the amount of devices by status." />
-    );
+    );*/
 }

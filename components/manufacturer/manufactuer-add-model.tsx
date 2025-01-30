@@ -10,7 +10,7 @@ import {
   DialogDescription
 } from "@/components/ui/dialog"
 import { ManufacturerAddForm } from "./manufacturer-add-form"
-import type { Manufacturer } from '@prisma/client'
+import type { Manufacturer } from '@prisma/client' // Use drizzle types
 
 export function ManufacturerAddModal() {
   const [isOpen, setIsOpen] = useState(false)

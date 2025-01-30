@@ -1,7 +1,7 @@
 
 
 import { Suspense } from 'react'
-import { Manufacturer } from '@prisma/client'
+import { Manufacturer } from '@prisma/client' // Use drizzle types
 import { AppSidebar } from "@/components/app-sidebar"
 import {
     Breadcrumb,

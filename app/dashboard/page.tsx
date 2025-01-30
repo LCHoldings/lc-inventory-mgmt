@@ -14,14 +14,20 @@ import {
 
 import DevicePie from "@/components/statistics/device-pie"
 import ItemPie from "@/components/statistics/item-pie"
+import { auth } from '@clerk/nextjs/server'
 import { redirect } from "next/navigation"
-import { auth } from "@/auth"
 
-export default function Page() {
-    const session = auth()
+
+export default async function Page() {
+    const { userId } = await auth()
+
+    if (!userId) {
+        redirect("/signin")
+    }
 
     return (
         <SidebarProvider>
+
             <AppSidebar />
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2">

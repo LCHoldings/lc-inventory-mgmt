@@ -5,6 +5,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 generator drizzle {
   provider = "drizzle-prisma-generator"
   output   = "./drizzle" // Where to put generated Drizle tables
@@ -14,14 +15,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
-
 // Other models remain unchanged
 model Device {
   id               String       @id @default(cuid())
   name             String
   status           Status       @relation(fields: [statusId], references: [id])
-  statusId         String  
+  statusId         String
   currentUserId    String?
   location         Location?    @relation(fields: [locationId], references: [id])
   locationId       String?
