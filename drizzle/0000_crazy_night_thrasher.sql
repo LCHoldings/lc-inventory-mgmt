@@ -1,38 +1,38 @@
 CREATE TABLE "categories" (
-	"id" varchar PRIMARY KEY DEFAULT 'cuid()' NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar,
 	"type" varchar
 );
 --> statement-breakpoint
 CREATE TABLE "devices" (
-	"id" varchar PRIMARY KEY DEFAULT 'cuid()' NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar,
-	"status_id" varchar,
+	"status_id" uuid,
 	"current_user_id" varchar,
-	"location_id" varchar,
+	"location_id" uuid,
 	"purchase_cost" varchar,
 	"purchase_date" date,
-	"supplier_id" varchar,
+	"supplier_id" uuid,
 	"purchase_order_id" varchar,
 	"serial_number" varchar,
-	"model_id" varchar,
+	"model_id" uuid,
 	"image" varchar,
 	"byod" boolean,
 	"notes" text,
 	"available" boolean,
-	"manufacturer_id" varchar,
-	"category_id" varchar
+	"manufacturer_id" uuid,
+	"category_id" uuid
 );
 --> statement-breakpoint
 CREATE TABLE "items" (
-	"id" varchar PRIMARY KEY DEFAULT 'cuid()' NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar,
-	"status_id" varchar,
+	"status_id" uuid,
 	"current_user_id" varchar,
-	"location_id" varchar,
+	"location_id" uuid,
 	"purchase_cost" varchar,
 	"purchase_date" date,
-	"supplier_id" varchar,
+	"supplier_id" uuid,
 	"purchase_order_id" varchar,
 	"serial_number" varchar,
 	"model_id" varchar,
@@ -40,26 +40,18 @@ CREATE TABLE "items" (
 	"byod" boolean,
 	"notes" text,
 	"available" boolean,
-	"manufacturer_id" varchar,
-	"category_id" varchar,
+	"manufacturer_id" uuid,
+	"category_id" uuid,
 	"user_id" varchar
 );
 --> statement-breakpoint
 CREATE TABLE "locations" (
-	"id" varchar PRIMARY KEY DEFAULT 'cuid()' NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar
 );
 --> statement-breakpoint
-CREATE TABLE "logs" (
-	"id" varchar PRIMARY KEY DEFAULT 'cuid()' NOT NULL,
-	"user_id" varchar,
-	"action" varchar,
-	"item" varchar,
-	"item_type" varchar
-);
---> statement-breakpoint
 CREATE TABLE "manufacturers" (
-	"id" varchar PRIMARY KEY DEFAULT 'cuid()' NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar,
 	"image" varchar,
 	"site_url" varchar,
@@ -69,23 +61,23 @@ CREATE TABLE "manufacturers" (
 );
 --> statement-breakpoint
 CREATE TABLE "models" (
-	"id" varchar PRIMARY KEY DEFAULT 'cuid()' NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar,
 	"image" varchar,
 	"model_number" varchar,
-	"manufacturer_id" varchar,
-	"category_id" varchar
+	"manufacturer_id" uuid,
+	"category_id" uuid
 );
 --> statement-breakpoint
 CREATE TABLE "statuses" (
-	"id" varchar PRIMARY KEY DEFAULT 'cuid()' NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar,
 	"color" varchar,
 	"default" boolean DEFAULT false
 );
 --> statement-breakpoint
 CREATE TABLE "suppliers" (
-	"id" varchar PRIMARY KEY DEFAULT 'cuid()' NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"website" varchar,
 	"phone_number" varchar,
 	"contact_person" varchar,

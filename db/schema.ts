@@ -1,24 +1,24 @@
-import { integer, pgTable, varchar, boolean, date, text, } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, boolean, date, text,uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 export const Device = pgTable('devices', {
-    id: varchar('id').primaryKey().default('cuid()'),
+    id: uuid().defaultRandom().primaryKey(),
     name: varchar('name'),
-    statusId: varchar('status_id').references(() => Status.id),
+    statusId: uuid('status_id').references(() => Status.id),
     currentUserId: varchar('current_user_id'),
-    locationId: varchar('location_id').references(() => Location.id),
+    locationId: uuid('location_id').references(() => Location.id),
     purchaseCost: varchar('purchase_cost'),
     purchaseDate: date('purchase_date'),
-    supplierId: varchar('supplier_id').references(() => Supplier.id),
+    supplierId: uuid('supplier_id').references(() => Supplier.id),
     purchaseOrderId: varchar('purchase_order_id'),
     serialNumber: varchar('serial_number'),
-    modelId: varchar('model_id').references(() => Model.id),
+    modelId: uuid('model_id').references(() => Model.id),
     image: varchar('image'),
     byod: boolean('byod'),
     notes: text('notes'),
     available: boolean('available'),
-    manufacturerId: varchar('manufacturer_id').references(() => Manufacturer.id),
-    categoryId: varchar('category_id').references(() => Category.id),
+    manufacturerId: uuid('manufacturer_id').references(() => Manufacturer.id),
+    categoryId: uuid('category_id').references(() => Category.id),
 });
 export const devicesRelations = relations(Device, ({ one }) => ({
     Status: one(Status, {
@@ -45,7 +45,7 @@ export const devicesRelations = relations(Device, ({ one }) => ({
 );
 
 export const Location = pgTable('locations', {
-    id: varchar('id').primaryKey().default('cuid()'),
+    id:  uuid().defaultRandom().primaryKey(),
     name: varchar('name'),
     
 });
@@ -55,14 +55,14 @@ export const locationsRelations = relations(Location, ({ many }) => ({
 }));
 
 export const Item = pgTable('items', {
-    id: varchar('id').primaryKey().default('cuid()'),
+    id:  uuid().defaultRandom().primaryKey(),
     name: varchar('name'),
-    statusId: varchar('status_id').references(() => Status.id),
+    statusId: uuid('status_id').references(() => Status.id),
     currentUserId: varchar('current_user_id'),
-    locationId: varchar('location_id').references(() => Location.id),
+    locationId: uuid('location_id').references(() => Location.id),
     purchaseCost: varchar('purchase_cost'),
     purchaseDate: date('purchase_date'),
-    supplierId: varchar('supplier_id').references(() => Supplier.id),
+    supplierId: uuid('supplier_id').references(() => Supplier.id),
     purchaseOrderId: varchar('purchase_order_id'),
     serialNumber: varchar('serial_number'),
     modelId: varchar('model_id').references(() => Model.id),
@@ -70,8 +70,8 @@ export const Item = pgTable('items', {
     byod: boolean('byod'),
     notes: text('notes'),
     available: boolean('available'),
-    manufacturerId: varchar('manufacturer_id').references(() => Manufacturer.id),
-    categoryId: varchar('category_id').references(() => Category.id),
+    manufacturerId: uuid('manufacturer_id').references(() => Manufacturer.id),
+    categoryId: uuid('category_id').references(() => Category.id),
     userId: varchar('user_id'),
 });
 export const itemsRelations = relations(Item, ({ one }) => ({
@@ -103,7 +103,7 @@ export const itemsRelations = relations(Item, ({ one }) => ({
 );
 
 export const Supplier = pgTable('suppliers', {
-    id: varchar('id').primaryKey().default('cuid()'),
+    id:  uuid().defaultRandom().primaryKey(),
     website: varchar('website'),
     phoneNumber: varchar('phone_number'),
     contactPerson: varchar('contact_person'),
@@ -115,7 +115,7 @@ export const suppliersRelations = relations(Supplier, ({ many }) => ({
     devices: many(Device),
 }));
 export const Manufacturer = pgTable('manufacturers', {
-    id: varchar('id').primaryKey().default('cuid()'),
+    id:  uuid().defaultRandom().primaryKey(),
     name: varchar('name'),
     image: varchar('image'),
     siteUrl: varchar('site_url'),
@@ -130,12 +130,12 @@ export const manufacturersRelations = relations(Manufacturer, ({ many }) => ({
 }));
 
 export const Model = pgTable('models', {
-    id: varchar('id').primaryKey().default('cuid()'),
+    id:  uuid().defaultRandom().primaryKey(),
     name: varchar('name'),
     image: varchar('image'),
     modelNumber: varchar('model_number'),
-    manufacturerId: varchar('manufacturer_id').references(() => Manufacturer.id),
-    categoryId: varchar('category_id').references(() => Category.id),
+    manufacturerId: uuid('manufacturer_id').references(() => Manufacturer.id),
+    categoryId: uuid('category_id').references(() => Category.id),
 });
 
 
@@ -154,7 +154,7 @@ export const modelsRelations = relations(Model, ({ one, many}) => ({
 );
 
 export const Category = pgTable('categories', {
-    id: varchar('id').primaryKey().default('cuid()'),
+    id:  uuid().defaultRandom().primaryKey(),
     name: varchar('name'),
     type: varchar('type'),
 });
@@ -174,7 +174,7 @@ export const categoriesRelations = relations(Category, ({ many }) => ({
 // });
 
 export const Status = pgTable('statuses', {
-    id: varchar('id').primaryKey().default('cuid()'),
+    id:  uuid().defaultRandom().primaryKey(),
     name: varchar('name'),
     color: varchar('color'),
     default: boolean('default').default(false),

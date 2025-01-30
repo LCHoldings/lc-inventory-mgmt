@@ -1,5 +1,5 @@
 {
-  "id": "7ff8feb0-56df-4e51-815a-b14620d722a8",
+  "id": "19a9e50e-de28-4e54-a0db-de4e4495ffe7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,10 +10,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "default": "'cuid()'"
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -42,10 +42,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "default": "'cuid()'"
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -55,7 +55,7 @@
         },
         "status_id": {
           "name": "status_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -67,7 +67,7 @@
         },
         "location_id": {
           "name": "location_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -85,7 +85,7 @@
         },
         "supplier_id": {
           "name": "supplier_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -103,7 +103,7 @@
         },
         "model_id": {
           "name": "model_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -133,13 +133,13 @@
         },
         "manufacturer_id": {
           "name": "manufacturer_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
         "category_id": {
           "name": "category_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         }
@@ -237,10 +237,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "default": "'cuid()'"
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -250,7 +250,7 @@
         },
         "status_id": {
           "name": "status_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -262,7 +262,7 @@
         },
         "location_id": {
           "name": "location_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -280,7 +280,7 @@
         },
         "supplier_id": {
           "name": "supplier_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -328,13 +328,13 @@
         },
         "manufacturer_id": {
           "name": "manufacturer_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
         "category_id": {
           "name": "category_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -438,57 +438,13 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "default": "'cuid()'"
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.logs": {
-      "name": "logs",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "'cuid()'"
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "action": {
-          "name": "action",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "item": {
-          "name": "item",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "item_type": {
-          "name": "item_type",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -508,10 +464,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "default": "'cuid()'"
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -564,10 +520,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "default": "'cuid()'"
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -589,13 +545,13 @@
         },
         "manufacturer_id": {
           "name": "manufacturer_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
         "category_id": {
           "name": "category_id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         }
@@ -641,10 +597,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "default": "'cuid()'"
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -680,10 +636,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "default": "'cuid()'"
+          "default": "gen_random_uuid()"
         },
         "website": {
           "name": "website",
