@@ -1,26 +1,19 @@
-import { auth } from "@/auth";
+
 import { NextResponse } from "next/server";
-import { prisma } from "@/prisma";
+import db from "@/db";
 import { checkPermission } from "@/lib/utils";
 
-export const GET = auth(async function GET(req) {
-    if (!req.auth) {
-        return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
-    }
-
-    if (!checkPermission(req.auth.user.email || "", "viewer", true)) {
-        return NextResponse.json({ message: "Not authorized" }, { status: 403 });
-    }
-
+export const GET = async function GET() {
     try {
-        return NextResponse.json(await prisma.category.findMany());
+        const categories = await db.category.findMany();
+        return NextResponse.json(categories);
     } catch {
         return NextResponse.json(
             { error: "Failed to fetch categories" },
             { status: 500 }
         );
     }
-});
+}
 
 export const POST = auth(async function POST(req) {
     if (!req.auth) {
