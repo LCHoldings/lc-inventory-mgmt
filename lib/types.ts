@@ -1,5 +1,6 @@
 export interface Category {
     id: number
+    organizationId: string
     name: string
     type: string
     models: Model[]
@@ -8,6 +9,7 @@ export interface Category {
 }
 export interface Supplier {
     id: number
+    organizationId: string
     website: string
     phoneNumber: string
     contactPerson: string
@@ -18,6 +20,7 @@ export interface Supplier {
 }
 export interface Manufacturer {
     id: number
+    organizationId: string
     siteUrl: string
     supportUrl: string
     supportPhone: string
@@ -30,11 +33,12 @@ export interface Manufacturer {
 }
 export interface Model {
     id: number
+    organizationId: string
     name: string
     image: string
     modelNumber: string
-    manufacturerId: number
-    categoryId: number
+    manufacturerId: string
+    categoryId: string
     Manufacturer: Manufacturer
     category: Category
     items: Item[]
@@ -42,6 +46,7 @@ export interface Model {
 }
 export interface Item {
     id: number
+    organizationId: string
     name: string
     modelId: number
     statusId: number
@@ -50,6 +55,7 @@ export interface Item {
 }
 export interface Device {
     id: number
+    organizationId: string
     name: string
     modelId: number
     statusId: number
@@ -58,12 +64,13 @@ export interface Device {
 }
 export interface Status {
     id: number
+    organizationId: string
     name: string
     color: string
     default: boolean
     items: Item[]
     devices: Device[]
-}	
+}
 
 export interface CategoryApi {
     error: string | null
