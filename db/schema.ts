@@ -1,8 +1,10 @@
 import { integer, pgTable, varchar, boolean, date, text,uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+import { Organization } from "@clerk/nextjs/server";
 
 export const Device = pgTable('devices', {
     id: uuid().defaultRandom().primaryKey(),
+    organizationId: varchar('organization_id'),
     name: varchar('name'),
     statusId: uuid('status_id').references(() => Status.id),
     currentUserId: varchar('current_user_id'),
@@ -45,6 +47,7 @@ export const devicesRelations = relations(Device, ({ one }) => ({
 );
 
 export const Location = pgTable('locations', {
+    organizationId: varchar('organization_id'),
     id:  uuid().defaultRandom().primaryKey(),
     name: varchar('name'),
     
@@ -56,6 +59,7 @@ export const locationsRelations = relations(Location, ({ many }) => ({
 
 export const Item = pgTable('items', {
     id:  uuid().defaultRandom().primaryKey(),
+    organizationId: varchar('organization_id'),
     name: varchar('name'),
     statusId: uuid('status_id').references(() => Status.id),
     currentUserId: varchar('current_user_id'),
@@ -104,6 +108,7 @@ export const itemsRelations = relations(Item, ({ one }) => ({
 
 export const Supplier = pgTable('suppliers', {
     id:  uuid().defaultRandom().primaryKey(),
+    organizationId: varchar('organization_id'),
     website: varchar('website'),
     phoneNumber: varchar('phone_number'),
     contactPerson: varchar('contact_person'),
@@ -116,6 +121,7 @@ export const suppliersRelations = relations(Supplier, ({ many }) => ({
 }));
 export const Manufacturer = pgTable('manufacturers', {
     id:  uuid().defaultRandom().primaryKey(),
+    organizationId: varchar('organization_id'),
     name: varchar('name'),
     image: varchar('image'),
     siteUrl: varchar('site_url'),
@@ -131,6 +137,7 @@ export const manufacturersRelations = relations(Manufacturer, ({ many }) => ({
 
 export const Model = pgTable('models', {
     id:  uuid().defaultRandom().primaryKey(),
+    organizationId: varchar('organization_id'),
     name: varchar('name'),
     image: varchar('image'),
     modelNumber: varchar('model_number'),
@@ -155,6 +162,7 @@ export const modelsRelations = relations(Model, ({ one, many}) => ({
 
 export const Category = pgTable('categories', {
     id:  uuid().defaultRandom().primaryKey(),
+    organizationId: varchar('organization_id'),
     name: varchar('name'),
     type: varchar('type'),
 });
@@ -175,6 +183,7 @@ export const categoriesRelations = relations(Category, ({ many }) => ({
 
 export const Status = pgTable('statuses', {
     id:  uuid().defaultRandom().primaryKey(),
+    organizationId: varchar('organization_id'),
     name: varchar('name'),
     color: varchar('color'),
     default: boolean('default').default(false),

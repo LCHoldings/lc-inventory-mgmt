@@ -64,3 +64,10 @@ export interface Status {
     items: Item[]
     devices: Device[]
 }	
+
+export interface CategoryApi {
+    error: string | null
+    succes: boolean
+    data: Category[] | null
+
+}

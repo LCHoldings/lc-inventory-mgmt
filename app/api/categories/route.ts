@@ -1,32 +1,34 @@
 
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import db from "@/db";
-import { Category as categoryTable} from "@/db/schema";
-import { Model as ModelsTable } from "@/db/schema";
+import { Category as categoryTable } from "@/db/schema";
+import CategorySchema from "@/lib/schemas/CategorySchema";
+import { currentUser, auth, clerkClient } from '@clerk/nextjs/server'
+import { eq, and } from 'drizzle-orm'
 //import { checkPermission } from "@/lib/utils";
 
-export const GET = async function GET() {
+export const GET = async function GET(req: NextRequest) {
+    const { userId, orgId, has } = await auth()
+
+    if (!userId) {
+        return new NextResponse('Unauthorized', { status: 401 })
+    }
+    const perms = has({ permission: 'org:category:read' })
+    if (!perms || !orgId) {
+        return new NextResponse('Unauthorized', { status: 401 })
+    }
     try {
-        const categories = await db.query.Model.findMany(
+        const categories = await db.query.Category.findMany(
             {
                 with: {
-                    category: true,
-                    Manufacturer: {
-                        with: {
-                            models: {
-                                with: {
-                                    Manufacturer: true,
-                                }
-                            },
-                            devices: true,
-                            items: true,
-                    }
-
-                }
-            }
+                    models: true,
+                    items: true,
+                    devices: true,
+                },
+                where: eq(categoryTable.organizationId, orgId)
             }
         )
-        return NextResponse.json(categories);
+        return NextResponse.json({ success: true, data: categories });
     } catch {
         return NextResponse.json(
             { error: "Failed to fetch categories" },
@@ -35,49 +37,88 @@ export const GET = async function GET() {
     }
 }
 
-// export const POST = auth(async function POST(req) {
-//     if (!req.auth) {
-//         return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
-//     }
+export const POST = async function POST(req: NextRequest) {
+    try {
+        const { userId, orgId, has } = await auth()
 
-//     if (!checkPermission(req.auth.user.email || "", "editor", true)) {
-//         return NextResponse.json({ message: "Not authorized" }, { status: 403 });
-//     }
+        if (!userId) {
+            return new NextResponse('Unauthorized', { status: 401 })
+        }
 
-//     try {
-//         const { name, type } = await req.json();
-//         const data = {
-//             id: `${name.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`,
-//             name,
-//             type,
-//         };
+        const perms = has({ permission: 'org:category:write' })
+        if (!perms || !orgId) {
+            return new NextResponse('Unauthorized', { status: 401 })
+        }
 
-//         return NextResponse.json(await prisma.category.create({ data }));
-//     } catch {
-//         return NextResponse.json(
-//             { error: "Failed to create category" },
-//             { status: 500 }
-//         );
-//     }
-// });
+        const response = CategorySchema.safeParse(req.body);
+        if (!response.success) {
+            return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+        }
+        const { type, name } = response.data;
 
-// export const DELETE = auth(async function DELETE(req) {
-//     if (!req.auth) {
-//         return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
-//     }
+        await db.insert(categoryTable).values({ type: type, name: name, organizationId: orgId });
 
-//     if (!checkPermission(req.auth.user.email || "", "editor", true)) {
-//         return NextResponse.json({ message: "Not authorized" }, { status: 403 });
-//     }
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        return NextResponse.json(
+            { error: "Failed to create category" },
+            { status: 500 }
+        );
+    }
+}
 
-//     try {
-//         const { categoryid } = await req.json();
-//         await prisma.category.delete({ where: { id: categoryid } });
-//         return NextResponse.json({ success: true });
-//     } catch {
-//         return NextResponse.json(
-//             { error: "Failed to delete category" },
-//             { status: 500 }
-//         );
-//     }
-// });
+export const DELETE = async function DELETE(req: NextRequest) {
+    try {
+        const { userId, orgId, has } = await auth()
+
+        if (!userId) {
+            return new NextResponse('Unauthorized', { status: 401 })
+        }
+
+        const perms = has({ permission: 'org:device:destructive' })
+        if (!perms || !orgId) {
+            return new NextResponse('Unauthorized', { status: 401 })
+        }
+        const id = req.nextUrl.searchParams.get('id') as string;
+
+        await db.delete(categoryTable).where(and(eq(categoryTable.id, id), eq(categoryTable.organizationId, orgId)));
+
+        return NextResponse.json({ success: true });
+    } catch {
+        return NextResponse.json(
+            { error: "Failed to delete category" },
+            { status: 500 }
+        );
+    }
+};
+export const PUT = async function PUT(req: NextRequest) {
+    try 
+        {
+            const { userId, orgId, has } = await auth()
+
+            if (!userId) {
+                return new NextResponse('Unauthorized', { status: 401 })
+            }
+
+            const perms = has({ permission: 'org:category:write' })
+            if (!perms || !orgId) {
+                return new NextResponse('Unauthorized', { status: 401 })
+            }
+            const id = req.nextUrl.searchParams.get('id') as string;
+
+            const response = CategorySchema.safeParse(req.body);
+            if (!response.success) {
+                return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+            }
+            const { type, name } = response.data;
+
+            await db.update(categoryTable).set({ type: type, name: name }).where(and(eq(categoryTable.id, id), eq(categoryTable.organizationId, orgId)));
+
+            return NextResponse.json({ success: true });
+        } catch {
+            return NextResponse.json(
+                { error: "Failed to update category" },
+                { status: 500 }
+            );
+        }
+    }
