@@ -37,7 +37,7 @@ export const GET = async function GET(req: NextRequest) {
     } catch (error) {
         console.log(error)
         return NextResponse.json(
-            { error: "Failed to fetch categories" },
+            { error: "Failed to fetch Statuses" },
             { status: 500 }
         );
     }
@@ -77,7 +77,7 @@ export const POST = async function POST(req: NextRequest) {
     } catch (error) {
         console.log(error)
         return NextResponse.json(
-            { error: "Failed to create category" },
+            { error: "Failed to create Statuses" },
             { status: 500 }
         );
     }
@@ -105,7 +105,7 @@ export const DELETE = async function DELETE(req: NextRequest) {
     } catch (error) {
         console.log(error)
         return NextResponse.json(
-            { error: "Failed to delete category" },
+            { error: "Failed to delete Statuses" },
             { status: 500 }
         );
     }
@@ -146,7 +146,7 @@ export const PUT = async function PUT(req: NextRequest) {
         return NextResponse.json({ success: true });
     } catch {
         return NextResponse.json(
-            { error: "Failed to update category" },
+            { error: "Failed to update Statuses" },
             { status: 500 }
         );
     }
