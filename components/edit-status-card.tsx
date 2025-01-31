@@ -24,28 +24,12 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { toast } from "@/hooks/use-toast"
 import { zodResolver } from "@hookform/resolvers/zod"
-
-const formSchema = z.object({
-    name: z.string().min(2, {
-        message: "Status name must be at least 2 characters.",
-    }),
-    color: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, {
-        message: "Invalid color format. Use hex color (e.g., #FF0000).",
-    }),
-    default: z.boolean().default(false),
-})
-
-type Status = {
-    id: string
-    statusid: string
-    name: string
-    color: string
-    default: boolean
-}
+import { Status } from "@/lib/types"
+import StatusSchema from "@/lib/schemas/StatusSchema"
 
 export function EditStatusCard({ status, setCardOpen }: { status: Status, setCardOpen: (open: boolean) => void }) {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof StatusSchema>>({
+        resolver: zodResolver(StatusSchema),
         defaultValues: {
             name: status.name,
             color: status.color,
@@ -53,13 +37,17 @@ export function EditStatusCard({ status, setCardOpen }: { status: Status, setCar
         },
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof StatusSchema>) {
         try {
-            console.log(status.statusid)
-            const response = await fetch('/api/statuses', {
+            console.log(status.id)
+            const response = await fetch(`/api/statuses?id=${status.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...values, statusid: status.id }),
+                body: JSON.stringify({
+                    name: values.name,
+                    color: values.color,
+                    default: values.default,
+                }),
             })
             if (!response.ok) {
                 const getError = await response.text()

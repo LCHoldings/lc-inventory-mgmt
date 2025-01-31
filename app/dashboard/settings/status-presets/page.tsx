@@ -20,21 +20,15 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { StatusManagement } from "@/components/status-management"
-
+import { useUser, useAuth } from '@clerk/nextjs';
 export default function Page() {
-    const { data: session } = useSession()
+    const { user } = useUser();
+    const { isLoaded } = useAuth();
     const router = useRouter();
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (!session) {
-                redirect('/auth/signin')
-            }
-        }, 1000)
-
-        return () => clearTimeout(timer)
-    }, [session])
-
+    if (isLoaded && !user?.id) {
+        redirect('/signin')
+    }
     return (
         <SidebarProvider>
             <AppSidebar />

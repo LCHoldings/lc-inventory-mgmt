@@ -37,7 +37,9 @@ export function CategoryManagement() {
             const response = await fetch('/api/categories')
             if (!response.ok) throw new Error('Failed to fetch categories')
             const data = await response.json()
-            setCategories(data)
+            console.log(data)
+
+            setCategories(data.data)
         } catch (error) {
             console.error(error)
             toast({
@@ -52,26 +54,13 @@ export function CategoryManagement() {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
-            
-            console.log(values)
-            let Datatosend = new FormData();
-            Datatosend.append('type', values.type)
-            Datatosend.append('name', values.name)
             const response = await fetch('/api/categories', {
                 method: 'POST',
-                headers: { 'Content-Type': 'multipart/form-data' },
-                body: Datatosend,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: values.type, name: values.name }),
             })
-            console.log(response.json())
             if (!response.ok) throw new Error('Failed to create category')
-            //if (response.)
-            // if (!response) throw new Error('Failed to create category')
-            // await fetchCategories()
-            // form.reset()
-            // toast({
-            //     title: "Success",
-            //     description: "Category created successfully",
-            // })
+            await fetchCategories()
         } catch (error) {
             console.error(error)
             toast({
@@ -91,10 +80,9 @@ export function CategoryManagement() {
 
     async function deleteCategory(categoryid: string) {
         try {
-            const response = await fetch('/api/categories', {
+            const response = await fetch(`/api/categories?id=${categoryid}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ categoryid }),
             })
             if (!response.ok) throw new Error('Failed to delete category')
             await fetchCategories()

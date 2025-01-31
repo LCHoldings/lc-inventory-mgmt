@@ -8,7 +8,7 @@ import React, {
     useEffect
 } from 'react';
 import { ColDef, RowSelectionOptions } from 'ag-grid-community';
-import { Manufacturer } from "@prisma/client"; // Use drizzle types
+
 import { useToast } from "@/hooks/use-toast";
 import ManufacturerEditSheet from "./manufacturer-edit-sheet";
 import ManufacturerDeleleDialog from "./manufacturer-delete-dailog";
@@ -58,7 +58,7 @@ function getDevicesForManufacturer(manufacturerId: string): Promise<number> {
 
 function getItemsForManufacturer(manufacturerId: string): Promise<number> {
     return fetch(
-        `/api/manufacturers?action=getManufacturerItems&manufacturerId=${manufacturerId}`,
+        `/api/manufacturers?id=${manufacturerId}`,
         {
             method: "GET",
         }
@@ -83,52 +83,14 @@ interface IRow {
 }
 
 export default function ManufacturerList() {
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [rowData, setRowData] = useState<IRow[]>([]);
     const { toast } = useToast();
 
-    const fetchManufacturersData = () => {
-        setIsLoading(true);
-        console.log('Fetching manufacturers...');
-        fetch('/api/manufacturers?action=getManufacturers', {
-            method: 'GET',
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setRowData(data);
 
-                data.forEach((manufacturer: Manufacturer) => {
-                    getItemsForManufacturer(manufacturer.id).then((itemsCount) => {
-                        setItems((prevState) => ({
-                            ...prevState,
-                            [manufacturer.id]: itemsCount,
-                        }));
-                    });
-
-                    getDevicesForManufacturer(manufacturer.id).then((devicesCount) => {
-                        setDevices((prevState) => ({
-                            ...prevState,
-                            [manufacturer.id]: devicesCount,
-                        }));
-                    });
-                });
-            })
-            .catch((error) => {
-                console.error('Error fetching manufacturers:', error);
-                toast({
-                    title: 'Error fetching manufacturers',
-                    description: 'Please try again later',
-                    variant: 'destructive',
-                });
-            })
-            .finally(() => {
-                setTimeout(() => {
-                    setIsLoading(false);
-                }, 1000);
-            });
-    };
 
     useEffect(() => {
-        fetchManufacturersData();
+        //fetchManufacturersData();
     });
 
     const rowSelection = useMemo<RowSelectionOptions | 'single' | 'multiple'>(() => {

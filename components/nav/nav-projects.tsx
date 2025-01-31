@@ -1,10 +1,9 @@
 "use client"
 
-import { useRouter } from 'next/navigation';
 import {
   Folder,
+  Forward,
   MoreHorizontal,
-  Share,
   Trash2,
   type LucideIcon,
 } from "lucide-react"
@@ -36,7 +35,6 @@ export function NavProjects({
   }[]
 }) {
   const { isMobile } = useSidebar()
-  const router = useRouter();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -45,7 +43,7 @@ export function NavProjects({
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <a onClick={() => router.push(item.url)}>
+              <a href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>
               </a>
@@ -58,7 +56,7 @@ export function NavProjects({
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-48"
+                className="w-48 rounded-lg"
                 side={isMobile ? "bottom" : "right"}
                 align={isMobile ? "end" : "start"}
               >
@@ -67,7 +65,7 @@ export function NavProjects({
                   <span>View Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Share className="text-muted-foreground" />
+                  <Forward className="text-muted-foreground" />
                   <span>Share Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -80,8 +78,8 @@ export function NavProjects({
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton>
-            <MoreHorizontal />
+          <SidebarMenuButton className="text-sidebar-foreground/70">
+            <MoreHorizontal className="text-sidebar-foreground/70" />
             <span>More</span>
           </SidebarMenuButton>
         </SidebarMenuItem>

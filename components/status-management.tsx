@@ -12,33 +12,16 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { toast } from '@/hooks/use-toast'
 import { EditStatusCard } from './edit-status-card'
-
-const formSchema = z.object({
-    name: z.string().min(2, {
-        message: "Status name must be at least 2 characters.",
-    }),
-    color: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, {
-        message: "Invalid color format. Use hex color (e.g., #FF0000).",
-    }),
-    default: z.boolean().default(false),
-})
-
-type Status = {
-    id: string
-    statusid: string
-    name: string
-    color: string
-    default: boolean
-}
-
+import StatusSchema from '@/lib/schemas/StatusSchema'
+import { Status, StatusApi } from '@/lib/types'
 export function StatusManagement() {
     const [statuses, setStatuses] = useState<Status[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [cardOpen, setCardOpen] = useState(false)
     const [cardStatus, setCardStatus] = useState<Status>()
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof StatusSchema>>({
+        resolver: zodResolver(StatusSchema),
         defaultValues: {
             name: "",
             color: "#000000",
@@ -66,8 +49,9 @@ export function StatusManagement() {
         try {
             const response = await fetch('/api/statuses')
             if (!response.ok) throw new Error('Failed to fetch statuses')
-            const data = await response.json()
-            setStatuses(data)
+            const data: StatusApi= await response.json()
+            if (!data.success || !data.data) throw new Error(data.error ?? 'Unknown error')
+            setStatuses(data.data)
         } catch (error) {
             console.error(error)
             toast({
@@ -80,12 +64,16 @@ export function StatusManagement() {
         }
     }
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof StatusSchema>) {
         try {
             const response = await fetch('/api/statuses', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(values),
+                body: JSON.stringify({
+                    name: values.name,
+                    color: values.color,
+                    default: values.default,
+                }),
             })
             if (!response.ok) {
                 const getError = await response.text()
@@ -101,17 +89,17 @@ export function StatusManagement() {
             toast({
                 title: "Error",
                 description: String(error) || "Failed to create status",
-                variant: "destructive", 
+                variant: "destructive",
             })
         }
     }
 
     async function deleteStatus(statusid: string) {
         try {
-            const response = await fetch('/api/statuses', {
+            const response = await fetch(`/api/statuses?id=${statusid}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ statusid }),
+
             })
             if (!response.ok) throw new Error('Failed to delete status')
             await fetchStatuses()
@@ -129,7 +117,7 @@ export function StatusManagement() {
         }
     }
     return (
-        
+
         <div className="space-y-8">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -214,7 +202,7 @@ export function StatusManagement() {
                                     <Button
                                         variant="destructive"
                                         size="icon"
-                                        onClick={() => deleteStatus(status.id)}
+                                        onClick={() => deleteStatus(status.id.toString())}
                                     >
                                         <Trash2 className="h-4 w-4" />
                                         <span className="sr-only">Delete status</span>

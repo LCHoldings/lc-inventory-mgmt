@@ -1,99 +1,153 @@
-import { auth } from "@/auth"
-import { NextResponse } from 'next/server'
-import { prisma } from '@/prisma'
 
-export const GET = auth(async function GET(req) {
-    if (!req.auth) {
-        return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
+import { NextResponse, NextRequest } from "next/server";
+import db from "@/db";
+import { Status as statusTable } from "@/db/schema";
+import statusSchema from "@/lib/schemas/StatusSchema";
+import { currentUser, auth, clerkClient } from '@clerk/nextjs/server'
+import { eq, and } from 'drizzle-orm'
+
+//import { checkPermission } from "@/lib/utils";
+
+export const GET = async function GET(req: NextRequest) {
+    const { userId, orgId, has } = await auth()
+
+    if (!userId) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    const perms = has({ permission: 'org:status:read' })
+    if (!perms || !orgId) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     try {
-        const statuses = await prisma.status.findMany()
-        return NextResponse.json(statuses)
-    } catch (error) {
-        console.error(error)
-        return NextResponse.json({ error: 'Failed to fetch statuses' }, { status: 500 })
-    }
-})
-
-export const POST = auth(async function POST(req) {
-    if (!req.auth) {
-        return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
-    }
-    try {
-        const { name, color, default: isDefault } = await req.json()
-
-        if (isDefault === true) {
-            const checkIfDefaultExists = await prisma.status.findFirst({
-                where: {
-                    default: true,
+        let Status;
+        try {
+            Status = await db.query.Status.findMany({
+                with: {
+                    items: true,
+                    devices: true,
                 },
-            })
-            if (checkIfDefaultExists) {
-                return NextResponse.json({ error: 'Default status already exists' }, { status: 400 })
+                where: eq(statusTable.organizationId, orgId)
+            });
+        } catch (err) {
+            Status = await db.query.Status.findMany({
+                where: eq(statusTable.organizationId, orgId)
+            });
+        }
+        return NextResponse.json({ success: true, data: Status });
+    } catch (error) {
+        console.log(error)
+        return NextResponse.json(
+            { error: "Failed to fetch categories" },
+            { status: 500 }
+        );
+    }
+}
+
+export const POST = async function POST(req: NextRequest) {
+    try {
+        const { userId, orgId, has } = await auth()
+
+        if (!userId) {
+            console.log('Unauthorized')
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const perms = has({ permission: 'org:status:write' })
+        if (!perms || !orgId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const bodyRaw = await req.json()
+        const response = statusSchema.safeParse(bodyRaw);
+        if (!response.success) {
+            return NextResponse.json({ error: response.error }, { status: 400 });
+        }
+        const { name, color, default: isDefault } = response.data;
+        if (isDefault) {
+            const defaultStatus = await db.query.Status.findMany({
+                where: and(eq(statusTable.default, true), eq(statusTable.organizationId, orgId))
+            });
+            if (defaultStatus.length > 0) {
+                await db.update(statusTable).set({ default: false }).where(and(eq(statusTable.default, true), eq(statusTable.organizationId, orgId)));
             }
         }
+        await db.insert(statusTable).values({ default: isDefault, color: color, name: name, organizationId: orgId });
 
-        const status = await prisma.status.create({
-            data: {
-                id: `${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`,
-                name,
-                color,
-                default: isDefault,
-            },
-        })
-        return NextResponse.json(status)
+        return NextResponse.json({ success: true });
     } catch (error) {
-        console.error(error)
-        return NextResponse.json({ error: 'Failed to create status' }, { status: 500 })
+        console.log(error)
+        return NextResponse.json(
+            { error: "Failed to create category" },
+            { status: 500 }
+        );
     }
-})
+}
 
-export const DELETE = auth(async function DELETE(req) {
-    if (!req.auth) {
-        return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
-    }
+export const DELETE = async function DELETE(req: NextRequest) {
     try {
-        const { statusid } = await req.json()
-        await prisma.status.delete({
-            where: { id: statusid },
-        })
-        return NextResponse.json({ success: true })
-    } catch (error) {
-        console.error(error)
-        return NextResponse.json({ error: 'Failed to delete status' }, { status: 500 })
-    }
-})
+        const { userId, orgId, has } = await auth()
 
-export const PUT = auth(async function PUT(req) {
-    if (!req.auth) {
-        return NextResponse.json({ message: "Not authenticated" }, { status: 401 })
-    }
-    try {
-        const { statusid, name, color, default: isDefault } = await req.json()
-
-        console.log("name", name, "color", color, "default", isDefault, "statusid", statusid)
-
-        const checkDefault = await prisma.status.findFirst({
-            where: {
-                default: true,
-            },
-        })
-        console.log("statusid", statusid, "checkDefault", checkDefault?.id)
-        if (isDefault === true && checkDefault?.id !== statusid) {
-            return NextResponse.json({ error: 'Default status already exists' }, { status: 400 })
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const status = await prisma.status.update({
-            where: { id: statusid },
-            data: {
-                name,
-                color,
-                default: isDefault,
-            },
-        })
-        return NextResponse.json(status)
+        const perms = has({ permission: 'org:status:delete' })
+        if (!perms || !orgId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        const id = req.nextUrl.searchParams.get('id') as string;
+        if (!id) {
+            return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+        }
+        await db.delete(statusTable).where(and(eq(statusTable.id, id), eq(statusTable.organizationId, orgId)));
+
+        return NextResponse.json({ success: true });
     } catch (error) {
-        console.error(error)
-        return NextResponse.json({ error: 'Failed to update status' }, { status: 500 })
+        console.log(error)
+        return NextResponse.json(
+            { error: "Failed to delete category" },
+            { status: 500 }
+        );
     }
-})
+};
+export const PUT = async function PUT(req: NextRequest) {
+    try {
+        const { userId, orgId, has } = await auth()
+
+        if (!userId) {
+            console.log('Unauthorized')
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const perms = has({ permission: 'org:status:write' })
+        if (!perms || !orgId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+        const id = req.nextUrl.searchParams.get('id') as string;
+        if (!id) {
+            return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+        }
+        const bodyRaw = await req.json()
+        const response = statusSchema.safeParse(bodyRaw);
+        if (!response.success) {
+            return NextResponse.json({ error: response.error }, { status: 400 });
+        }
+        const { name, color, default: isDefault } = response.data;
+        if (isDefault) {
+            const defaultStatus = await db.query.Status.findMany({
+                where: and(eq(statusTable.default, true), eq(statusTable.organizationId, orgId))
+            });
+            if (defaultStatus.length > 0) {
+                await db.update(statusTable).set({ default: false }).where(and(eq(statusTable.default, true), eq(statusTable.organizationId, orgId)));
+            }
+        }
+        await db.update(statusTable).set({ default: isDefault, color: color, name: name  }).where(and(eq(statusTable.id, id), eq(statusTable.organizationId, orgId)));
+
+        return NextResponse.json({ success: true });
+    } catch {
+        return NextResponse.json(
+            { error: "Failed to update category" },
+            { status: 500 }
+        );
+    }
+}

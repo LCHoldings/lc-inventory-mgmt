@@ -6,31 +6,38 @@ import CategorySchema from "@/lib/schemas/CategorySchema";
 import { currentUser, auth, clerkClient } from '@clerk/nextjs/server'
 import { eq, and } from 'drizzle-orm'
 import { register } from "module";
+import { error } from "console";
 //import { checkPermission } from "@/lib/utils";
 
 export const GET = async function GET(req: NextRequest) {
     const { userId, orgId, has } = await auth()
 
     if (!userId) {
-        return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const perms = has({ permission: 'org:category:read' })
     if (!perms || !orgId) {
-        return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     try {
-        const categories = await db.query.Category.findMany(
-            {
+        let categories;
+        try {
+            categories = await db.query.Category.findMany({
                 with: {
                     models: true,
                     items: true,
                     devices: true,
                 },
                 where: eq(categoryTable.organizationId, orgId)
-            }
-        )
+            });
+        } catch (err) {
+            categories = await db.query.Category.findMany({
+                where: eq(categoryTable.organizationId, orgId)
+            });
+        }
         return NextResponse.json({ success: true, data: categories });
-    } catch {
+    } catch (error) {
+        console.log(error)
         return NextResponse.json(
             { error: "Failed to fetch categories" },
             { status: 500 }
@@ -44,18 +51,16 @@ export const POST = async function POST(req: NextRequest) {
 
         if (!userId) {
             console.log('Unauthorized')
-            return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
         const perms = has({ permission: 'org:category:write' })
         if (!perms || !orgId) {
-            console.log(perms)
-            console.log(orgId)
-            console.log('Unauthorized2')
-            return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-        //console.log(req.json())
-        const response = CategorySchema.safeParse(req.body);
+
+        const bodyRaw = await req.json()
+        const response = CategorySchema.safeParse(bodyRaw);
         if (!response.success) {
             return NextResponse.json({ error: response.error }, { status: 400 });
         }
@@ -78,19 +83,23 @@ export const DELETE = async function DELETE(req: NextRequest) {
         const { userId, orgId, has } = await auth()
 
         if (!userId) {
-            return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
         const perms = has({ permission: 'org:device:destructive' })
         if (!perms || !orgId) {
-            return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
         const id = req.nextUrl.searchParams.get('id') as string;
+        if (!id) {
+            return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+        }
 
         await db.delete(categoryTable).where(and(eq(categoryTable.id, id), eq(categoryTable.organizationId, orgId)));
 
         return NextResponse.json({ success: true });
-    } catch {
+    } catch (error) {
+        console.log(error)
         return NextResponse.json(
             { error: "Failed to delete category" },
             { status: 500 }
@@ -98,33 +107,32 @@ export const DELETE = async function DELETE(req: NextRequest) {
     }
 };
 export const PUT = async function PUT(req: NextRequest) {
-    try 
-        {
-            const { userId, orgId, has } = await auth()
+    try {
+        const { userId, orgId, has } = await auth()
 
-            if (!userId) {
-                return new NextResponse('Unauthorized', { status: 401 })
-            }
-
-            const perms = has({ permission: 'org:category:write' })
-            if (!perms || !orgId) {
-                return new NextResponse('Unauthorized', { status: 401 })
-            }
-            const id = req.nextUrl.searchParams.get('id') as string;
-
-            const response = CategorySchema.safeParse(req.body);
-            if (!response.success) {
-                return NextResponse.json({ error: "Invalid request" }, { status: 400 });
-            }
-            const { type, name } = response.data;
-
-            await db.update(categoryTable).set({ type: type, name: name }).where(and(eq(categoryTable.id, id), eq(categoryTable.organizationId, orgId)));
-
-            return NextResponse.json({ success: true });
-        } catch {
-            return NextResponse.json(
-                { error: "Failed to update category" },
-                { status: 500 }
-            );
+        if (!userId) {
+            return new NextResponse('Unauthorized', { status: 401 })
         }
+
+        const perms = has({ permission: 'org:category:write' })
+        if (!perms || !orgId) {
+            return new NextResponse('Unauthorized', { status: 401 })
+        }
+        const id = req.nextUrl.searchParams.get('id') as string;
+
+        const response = CategorySchema.safeParse(req.body);
+        if (!response.success) {
+            return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+        }
+        const { type, name } = response.data;
+
+        await db.update(categoryTable).set({ type: type, name: name }).where(and(eq(categoryTable.id, id), eq(categoryTable.organizationId, orgId)));
+
+        return NextResponse.json({ success: true });
+    } catch {
+        return NextResponse.json(
+            { error: "Failed to update category" },
+            { status: 500 }
+        );
     }
+}
