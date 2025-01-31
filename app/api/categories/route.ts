@@ -5,17 +5,18 @@ import { Category as categoryTable } from "@/db/schema";
 import CategorySchema from "@/lib/schemas/CategorySchema";
 import { currentUser, auth, clerkClient } from '@clerk/nextjs/server'
 import { eq, and } from 'drizzle-orm'
+import { register } from "module";
 //import { checkPermission } from "@/lib/utils";
 
 export const GET = async function GET(req: NextRequest) {
     const { userId, orgId, has } = await auth()
 
     if (!userId) {
-        return new NextResponse('Unauthorized', { status: 401 })
+        return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
     }
     const perms = has({ permission: 'org:category:read' })
     if (!perms || !orgId) {
-        return new NextResponse('Unauthorized', { status: 401 })
+        return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
     }
     try {
         const categories = await db.query.Category.findMany(
@@ -42,17 +43,21 @@ export const POST = async function POST(req: NextRequest) {
         const { userId, orgId, has } = await auth()
 
         if (!userId) {
-            return new NextResponse('Unauthorized', { status: 401 })
+            console.log('Unauthorized')
+            return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
         }
 
         const perms = has({ permission: 'org:category:write' })
         if (!perms || !orgId) {
-            return new NextResponse('Unauthorized', { status: 401 })
+            console.log(perms)
+            console.log(orgId)
+            console.log('Unauthorized2')
+            return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
         }
-
+        //console.log(req.json())
         const response = CategorySchema.safeParse(req.body);
         if (!response.success) {
-            return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+            return NextResponse.json({ error: response.error }, { status: 400 });
         }
         const { type, name } = response.data;
 
@@ -60,6 +65,7 @@ export const POST = async function POST(req: NextRequest) {
 
         return NextResponse.json({ success: true });
     } catch (error) {
+        console.log(error)
         return NextResponse.json(
             { error: "Failed to create category" },
             { status: 500 }
@@ -72,12 +78,12 @@ export const DELETE = async function DELETE(req: NextRequest) {
         const { userId, orgId, has } = await auth()
 
         if (!userId) {
-            return new NextResponse('Unauthorized', { status: 401 })
+            return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
         }
 
         const perms = has({ permission: 'org:device:destructive' })
         if (!perms || !orgId) {
-            return new NextResponse('Unauthorized', { status: 401 })
+            return NextResponse.json({ error: "Unauthorized" },{ status: 401 });
         }
         const id = req.nextUrl.searchParams.get('id') as string;
 

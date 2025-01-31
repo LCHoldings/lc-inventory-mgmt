@@ -11,22 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { toast } from '@/hooks/use-toast'
-
-const formSchema = z.object({
-    name: z.string().min(2, {
-        message: "Category name must be at least 2 characters.",
-    }),
-    type: z.string().min(1, {
-        message: "Please select a category type.",
-    }),
-})
-
-type Category = {
-    id: string
-    categoryid: string
-    name: string
-    type: string
-}
+import formSchema from '@/lib/schemas/CategorySchema'
+import { Category } from '@/lib/types'
+import { json } from 'stream/consumers'
 
 export function CategoryManagement() {
     const [categories, setCategories] = useState<Category[]>([])
@@ -36,7 +23,7 @@ export function CategoryManagement() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
-            type: "",
+            type: "device",
         },
     })
 
@@ -65,18 +52,26 @@ export function CategoryManagement() {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
+            
+            console.log(values)
+            let Datatosend = new FormData();
+            Datatosend.append('type', values.type)
+            Datatosend.append('name', values.name)
             const response = await fetch('/api/categories', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(values),
+                headers: { 'Content-Type': 'multipart/form-data' },
+                body: Datatosend,
             })
+            console.log(response.json())
             if (!response.ok) throw new Error('Failed to create category')
-            await fetchCategories()
-            form.reset()
-            toast({
-                title: "Success",
-                description: "Category created successfully",
-            })
+            //if (response.)
+            // if (!response) throw new Error('Failed to create category')
+            // await fetchCategories()
+            // form.reset()
+            // toast({
+            //     title: "Success",
+            //     description: "Category created successfully",
+            // })
         } catch (error) {
             console.error(error)
             toast({
@@ -178,14 +173,14 @@ export function CategoryManagement() {
                     </TableHeader>
                     <TableBody>
                         {categories.map((category) => (
-                            <TableRow key={category.categoryid}>
+                            <TableRow key={category.id}>
                                 <TableCell>{category.name}</TableCell>
                                 <TableCell><span className="capitalize">{category.type}</span></TableCell>
                                 <TableCell>
                                     <Button
                                         variant="destructive"
                                         size="icon"
-                                        onClick={() => deleteCategory(category.categoryid)}
+                                        onClick={() => deleteCategory(category.id.toString())}
                                     >
                                         <Trash2 className="h-4 w-4" />
                                         <span className="sr-only">Delete category</span>

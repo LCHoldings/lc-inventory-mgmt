@@ -71,3 +71,33 @@ export interface CategoryApi {
     data: Category[] | null
 
 }
+export interface SupplierApi {
+    error: string | null
+    succes: boolean
+    data: Supplier[] | null
+}
+export interface ManufacturerApi {
+    error: string | null
+    succes: boolean
+    data: Manufacturer[] | null
+}
+export interface ModelApi {
+    error: string | null
+    succes: boolean
+    data: Model[] | null
+}
+export interface ItemApi {
+    error: string | null
+    succes: boolean
+    data: Item[] | null
+}
+export interface DeviceApi {
+    error: string | null
+    succes: boolean
+    data: Device[] | null
+}
+export interface StatusApi {
+    error: string | null
+    succes: boolean
+    data: Status[] | null
+}
