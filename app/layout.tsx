@@ -1,5 +1,5 @@
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { Toaster } from "react-hot-toast";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -15,33 +15,30 @@ export default function RootLayout({
       <body
         className={`antialiased`}
       >
-
-        <ClerkProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <WrapperWithQuery>
-              {children}
-            </WrapperWithQuery>
-            <Toaster toastOptions={
-              {
-                style: {
-                  borderRadius: "8px",
-                  borderColor: "hsl(var(--border))",
-                  borderWidth: "1px",
-                  background: "hsl(var(--background))",
-                  color: "hsl(var(--foreground))",
-                },
-              }
-            } />
-            <div className="bottom-4 right-4 absolute">
-              <ThemeToggle />
-            </div>
-          </ThemeProvider>
-        </ClerkProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <WrapperWithQuery>
+            {children}
+          </WrapperWithQuery>
+          <Toaster toastOptions={
+            {
+              style: {
+                borderRadius: "8px",
+                borderColor: "hsl(var(--border))",
+                borderWidth: "1px",
+                background: "hsl(var(--background))",
+                color: "hsl(var(--foreground))",
+              },
+            }
+          } />
+          <div className="bottom-4 right-4 absolute">
+            <ThemeToggle />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

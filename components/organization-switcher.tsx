@@ -11,21 +11,15 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLab
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import toast from "react-hot-toast"
-import { useTheme } from "next-themes"
 
 // Next
 import Image from 'next/image'
 
 // Clerk
 import { useOrganizationList, useOrganization, useClerk } from '@clerk/nextjs'
-import { dark } from "@clerk/themes"
-import { Button } from "./ui/button"
 
 
 export function OrganizationSwitcher() {
-  const { theme, systemTheme } = useTheme();
-  const [currentTheme, setCurrentTheme] = React.useState(theme);
-
   const { isMobile } = useSidebar()
 
   const { openCreateOrganization, openOrganizationProfile } = useClerk();
@@ -36,18 +30,7 @@ export function OrganizationSwitcher() {
     },
   })
 
-
-
   const selectedOrganization = useOrganization();
-
-  React.useEffect(() => {
-    console.log(theme, systemTheme);
-    if (theme === "system") {
-      setCurrentTheme(systemTheme);
-    } else {
-      setCurrentTheme(theme);
-    }
-  }, [theme, systemTheme]);
 
   if (!isLoaded) {
     return <Skeleton className="h-8 w-full" />
@@ -126,13 +109,13 @@ export function OrganizationSwitcher() {
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2" onClick={() => openCreateOrganization({ appearance: { baseTheme: currentTheme === "dark" ? dark : undefined } })}>
+            <DropdownMenuItem className="gap-2 p-2" onClick={() => openCreateOrganization()}>
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                 <Plus className="size-4" />
               </div>
               <button className="font-medium text-muted-foreground">Create team</button>
             </DropdownMenuItem>
-            <DropdownMenuItem className="gap-2 p-2" onClick={() => openOrganizationProfile({ appearance: { baseTheme: currentTheme === "dark" ? dark : undefined } })}>
+            <DropdownMenuItem className="gap-2 p-2" onClick={() => openOrganizationProfile()}>
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                 <Settings className="size-4" />
               </div>
