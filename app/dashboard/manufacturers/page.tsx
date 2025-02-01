@@ -1,7 +1,5 @@
+"use client"
 
-
-import { Suspense } from 'react'
-import { Manufacturer } from '@prisma/client' // Use drizzle types
 import { AppSidebar } from "@/components/app-sidebar"
 import {
     Breadcrumb,
@@ -17,26 +15,25 @@ import {
     SidebarProvider,
     SidebarTrigger,
 } from "@/components/ui/sidebar"
-import ManufacturerList from '@/components/manufacturer/manufacturers-list'
-import { ManufacturerAddModal } from '@/components/manufacturer/manufactuer-add-model'
+import { ManufacturerManagement } from '@/components/manufacturer-management'
+import { useRouter } from 'next/navigation'
 
 
 export default function Page() {
-
-   
+    const router = useRouter()
 
     return (
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2">
+                <header className="flex h-16 shrink-0 items-center gap-2 bg-sidebar border-b">
                     <div className="flex items-center gap-2 px-4">
                         <SidebarTrigger className="-ml-1" />
                         <Separator orientation="vertical" className="mr-2 h-4" />
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink>
+                                    <BreadcrumbLink onClick={() => router.push('/dashboard')}>
                                         Dashboard
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
@@ -48,14 +45,8 @@ export default function Page() {
                         </Breadcrumb>
                     </div>
                 </header>
-                <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                    <Suspense fallback={<div>Loading manufacturers...</div>}>
-                        <div className='flex flex-row justify-between'>
-                            <h1 className="text-2xl font-semibold">Manufacturers</h1>
-                            <ManufacturerAddModal />
-                        </div>
-                        <ManufacturerList/>
-                    </Suspense>
+                <div className="flex flex-1 flex-col gap-4 p-8">
+                    <ManufacturerManagement />
                 </div>
             </SidebarInset>
         </SidebarProvider>

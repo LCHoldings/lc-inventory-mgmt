@@ -12,7 +12,9 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-import { useAuth, useUser } from '@clerk/nextjs';
+import { useAuth, useClerk, useUser } from '@clerk/nextjs';
+import { dark } from '@clerk/themes';
+import { useTheme } from 'next-themes';
 
 import {
   DropdownMenu,
@@ -32,12 +34,29 @@ import {
 } from "@/components/ui/sidebar"
 
 import { Skeleton } from "@/components/ui/skeleton"
+import { useEffect, useState } from 'react';
 
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { isLoaded, signOut } = useAuth()
+  const { openUserProfile } = useClerk()
   const { user } = useUser()
   const router = useRouter();
+
+  const { theme, systemTheme, } = useTheme();
+  const [currentTheme, setCurrentTheme] = useState(theme);
+
+  useEffect(() => {
+    console.log(theme, systemTheme);
+
+    if (theme == null) {
+      setCurrentTheme(systemTheme);
+    } else if (theme === "system") {
+      setCurrentTheme(systemTheme);
+    } else {
+      setCurrentTheme(theme);
+    }
+  }, [theme, systemTheme]);
 
 
   if (!user?.id && isLoaded) {
@@ -119,10 +138,10 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push('/dashboard/account')}>
+                <DropdownMenuItem onClick={() => openUserProfile({ appearance: { baseTheme: currentTheme === 'dark' ? dark : undefined } })}>
                 <BadgeCheck />
                 Account
-              </DropdownMenuItem>
+                </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()} >

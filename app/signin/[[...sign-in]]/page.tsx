@@ -7,12 +7,15 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
 export default function Page() {
-  const { theme, systemTheme } = useTheme();
+  const { theme, systemTheme, } = useTheme();
   const [currentTheme, setCurrentTheme] = useState(theme);
 
   useEffect(() => {
     console.log(theme, systemTheme);
-    if (theme === "system") {
+
+    if (theme == null) {
+      setCurrentTheme(systemTheme);
+    } else if (theme === "system") {
       setCurrentTheme(systemTheme);
     } else {
       setCurrentTheme(theme);
