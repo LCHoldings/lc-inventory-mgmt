@@ -12,7 +12,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-import { useAuth, useUser } from '@clerk/nextjs';
+import { useAuth, useClerk, useUser } from '@clerk/nextjs';
 
 import {
   DropdownMenu,
@@ -36,6 +36,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { isLoaded, signOut } = useAuth()
+  const { openUserProfile } = useClerk()
   const { user } = useUser()
   const router = useRouter();
 
@@ -119,10 +120,10 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push('/dashboard/account')}>
+                <DropdownMenuItem onClick={() => openUserProfile()}>
                 <BadgeCheck />
                 Account
-              </DropdownMenuItem>
+                </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()} >

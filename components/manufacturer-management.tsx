@@ -25,67 +25,70 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import toast from "react-hot-toast"
 
 // Schemas and types
-import StatusSchema from "@/lib/schemas/StatusSchema"
-import type { Status } from "@/lib/types"
+import ManufacturerSchema from '@/lib/schemas/ManufacturerSchema';
+import type { Manufacturer } from "@/lib/types"
 
 // API functions
-import { fetchStatuses, createStatus, deleteStatus, updateStatus } from "@/lib/statusApi"
+import { fetchManufacturers, deleteManufacturer, updateManufacturer, createManufacturer } from "@/lib/manufacturersApi"
 
 // Loader component
-import Loader from "./loader"
+import Loader from "@/components/loader"
 
 // Theme
 import { lcTheme } from "@/lib/utils"
 
-export function StatusManagement() {
+export function ManufacturerManagement() {
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-    const [editingStatus, setEditingStatus] = useState<Status | null>(null)
+    const [editingStatus, setEditingStatus] = useState<Manufacturer | null>(null)
     const queryClient = useQueryClient()
 
-    const { data: statuses, isLoading, isError } = useQuery<Status[], Error>({
-        queryKey: ["statuses"],
-        queryFn: fetchStatuses,
+    const { data: manufacturers, isLoading, isError } = useQuery<Manufacturer[], Error>({
+        queryKey: ["manufacturers"],
+        queryFn: fetchManufacturers,
     })
 
-    const createMutation = useMutation<void, Error, z.infer<typeof StatusSchema>>({
-        mutationFn: (status) => createStatus({ ...status }),
+    const createMutation = useMutation<void, Error, z.infer<typeof ManufacturerSchema>>({
+        mutationFn: (manufacturer) => createManufacturer({ ...manufacturer }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["statuses"] })
-            toast.success("Status created successfully")
+            queryClient.invalidateQueries({ queryKey: ["manufacturers"] })
+            toast.success("Manufacturer created successfully")
             setIsAddDialogOpen(false)
         },
-        onError: (error: Error) => toast.error(error.message || "Failed to create status")
+        onError: (error: Error) => toast.error(error.message || "Failed to create Manufacturer")
     })
 
-    const updateMutation = useMutation<void, Error, Partial<Status> & { id: number }>({
-        mutationFn: updateStatus,
+    const updateMutation = useMutation<void, Error, Partial<Manufacturer> & { id: number }>({
+        mutationFn: updateManufacturer,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["statuses"] })
-            toast.success("Status updated successfully")
+            queryClient.invalidateQueries({ queryKey: ["manufacturers"] })
+            toast.success("Manufacturer updated successfully")
             setEditingStatus(null)
         },
-        onError: (error: Error) => toast.error(error.message || "Failed to update status")
+        onError: (error: Error) => toast.error(error.message || "Failed to update Manufacturer")
     })
 
     const deleteMutation = useMutation<void, Error, number>({
-        mutationFn: deleteStatus,
+        mutationFn: deleteManufacturer,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["statuses"] })
-            toast.success("Status deleted successfully")
+            queryClient.invalidateQueries({ queryKey: ["manufacturers"] })
+            toast.success("Manufacturer deleted successfully")
         },
-        onError: (error: Error) => toast.error(error.message || "Failed to delete status")
+        onError: (error: Error) => toast.error(error.message || "Failed to delete Manufacturer")
     })
 
-    const form = useForm<z.infer<typeof StatusSchema>>({
-        resolver: zodResolver(StatusSchema),
+    const form = useForm<z.infer<typeof ManufacturerSchema>>({
+        resolver: zodResolver(ManufacturerSchema),
         defaultValues: {
+            siteUrl: "",
+            supportUrl: "",
+            supportPhone: "",
+            supportEmail: "",
             name: "",
-            color: "#000000",
-            default: false,
+            image: "",
         },
     })
 
-    const onSubmit = (values: z.infer<typeof StatusSchema>) => {
+    const onSubmit = (values: z.infer<typeof ManufacturerSchema>) => {
         if (editingStatus) {
             updateMutation.mutate({ id: editingStatus.id, ...values })
         } else {
@@ -100,39 +103,54 @@ export function StatusManagement() {
             flex: 1,
         },
         {
-            field: "color",
-            headerName: "Color",
+            field: "supportUrl",
+            headerName: "Support Page",
             flex: 1,
             sortable: false,
             cellRenderer: (params: ICellRendererParams) => (
-                <div className="flex items-center space-x-2">
-                    <div className="w-6 h-6 rounded-full" style={{ backgroundColor: params.value }} />
-                    <span>{params.value}</span>
-                </div>
+                <a href={params.data.supportUrl} target="_blank" rel="noreferrer">{params.data.supportUrl}</a>
             ),
         },
         {
-            field: "default",
-            headerName: "Default",
+            field: "supportPhone",
+            headerName: "Support Phone",
             flex: 1,
+            sortable: false,
             cellRenderer: (params: ICellRendererParams) => (
-                <div className="flex items-center h-full">
-                    {params.value ? <CircleCheck className="size-6 text-green-500" /> : <CircleX className="size-6 text-red-500" />}
-                </div>
+                <a href={"tel:" + params.data.supportPhone} target="_blank" rel="noreferrer">{params.data.supportPhone}</a>
             ),
         },
         {
-            headerName: "Devices",
+            field: "supportEmail",
+            headerName: "Support Email",
             flex: 1,
+            sortable: false,
+            cellRenderer: (params: ICellRendererParams) => (
+                <a href={"mailto:" + params.data.supportEmail} target="_blank" rel="noreferrer">{params.data.supportEmail}</a>
+            ),
+        },
+        {
+            headerName: "Items",
+            flex: 1,
+            maxWidth: 100,
             cellRenderer: (params: ICellRendererParams) => (
                 params.data.devices.length
             )
         },
         {
-            headerName: "Items",
+            headerName: "Devices",
             flex: 1,
+            maxWidth: 100,
             cellRenderer: (params: ICellRendererParams) => (
                 params.data.devices.length
+            )
+        },
+        {
+            "headerName": "Models",
+            "flex": 1,
+            maxWidth: 100,
+            "cellRenderer": (params: ICellRendererParams) => (
+                params.data.models.length
             )
         },
         {
@@ -166,7 +184,7 @@ export function StatusManagement() {
     return (
         <div className="space-y-8">
             <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold">Status Management</h2>
+                <h2 className="text-3xl font-bold">Manufacturers</h2>
                 <Button onClick={() => setIsAddDialogOpen(true)}>
                     <Plus className="mr-2 h-4 w-4" /> Add New Status
                 </Button>
@@ -174,7 +192,7 @@ export function StatusManagement() {
 
             <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
                 <AgGridReact
-                    rowData={statuses}
+                    rowData={manufacturers}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     animateRows={true}
@@ -204,11 +222,12 @@ export function StatusManagement() {
                             <FormField
                                 control={form.control}
                                 name="name"
+                                defaultValue={editingStatus?.name}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Status Name</FormLabel>
+                                        <FormLabel>Manufacturer Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter status name" {...field} />
+                                            <Input placeholder="Enter manufacturer name" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -216,15 +235,12 @@ export function StatusManagement() {
                             />
                             <FormField
                                 control={form.control}
-                                name="color"
+                                name="siteUrl"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Color</FormLabel>
+                                        <FormLabel>Site URL</FormLabel>
                                         <FormControl>
-                                            <div className="flex items-center space-x-2">
-                                                <Input type="color" {...field} className="w-12 h-12 p-1 rounded-md" />
-                                                <Input {...field} placeholder="#000000" className="flex-grow" />
-                                            </div>
+                                            <Input placeholder="Enter site URL" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -232,19 +248,57 @@ export function StatusManagement() {
                             />
                             <FormField
                                 control={form.control}
-                                name="default"
+                                name="supportUrl"
                                 render={({ field }) => (
-                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                    <FormItem>
+                                        <FormLabel>Support URL</FormLabel>
                                         <FormControl>
-                                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                            <Input placeholder="Enter support URL" {...field} />
                                         </FormControl>
-                                        <div className="space-y-1 leading-none">
-                                            <FormLabel>Set as Default</FormLabel>
-                                        </div>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit">{editingStatus ? "Update" : "Add"} Status</Button>
+                            <FormField
+                                control={form.control}
+                                name="supportPhone"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Support Phone</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Enter support phone" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="supportEmail"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Support Email</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Enter support email" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="image"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Image URL</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Enter image URL" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <Button type="submit">{editingStatus ? "Update" : "Add"} Manufacturer</Button>
                         </form>
                     </Form>
                 </DialogContent>
