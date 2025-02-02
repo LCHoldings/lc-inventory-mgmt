@@ -3,11 +3,10 @@ import { NextResponse, NextRequest } from "next/server";
 import db from "@/db";
 import { Category as categoryTable } from "@/db/schema";
 import CategorySchema from "@/lib/schemas/CategorySchema";
-import { currentUser, auth, clerkClient } from '@clerk/nextjs/server'
+import { auth } from '@clerk/nextjs/server'
 import { eq, and } from 'drizzle-orm'
-import { register } from "module";
-import { error } from "console";
-//import { checkPermission } from "@/lib/utils";
+
+
 
 export const GET = async function GET(req: NextRequest) {
     const { userId, orgId, has } = await auth()
@@ -30,7 +29,9 @@ export const GET = async function GET(req: NextRequest) {
                 },
                 where: eq(categoryTable.organizationId, orgId)
             });
-        } catch (err) {
+        } catch (error) 
+        {
+            console.log(error)
             categories = await db.query.Category.findMany({
                 where: eq(categoryTable.organizationId, orgId)
             });

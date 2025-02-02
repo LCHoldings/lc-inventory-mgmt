@@ -1,6 +1,7 @@
 import { integer, pgTable, varchar, boolean, date, text,uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { Organization } from "@clerk/nextjs/server";
+import { Cat } from "lucide-react";
 
 export const Device = pgTable('devices', {
     id: uuid().defaultRandom().primaryKey(),
@@ -38,6 +39,10 @@ export const devicesRelations = relations(Device, ({ one }) => ({
     Model: one(Model, {
         fields: [Device.modelId],
         references: [Model.id],
+    }),
+    Category: one(Category, {
+        fields: [Device.categoryId],
+        references: [Category.id],
     }),
     Manufacturer: one(Manufacturer, {
         fields: [Device.manufacturerId],

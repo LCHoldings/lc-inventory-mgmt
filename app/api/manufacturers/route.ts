@@ -26,7 +26,8 @@ export const GET = async function GET(req: NextRequest) {
                 },
                 where: eq(manufacturerTable.organizationId, orgId)
             });
-        } catch (err) {
+        } catch (error) {
+            console.log(error)
             manufactorues = await db.query.Category.findMany({
                 where: eq(manufacturerTable.organizationId, orgId)
             });
