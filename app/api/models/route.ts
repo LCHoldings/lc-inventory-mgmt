@@ -22,6 +22,8 @@ export const GET = async function GET(req: NextRequest) {
                 with: {
                     items: true,
                     devices: true,
+                    Manufacturer: true,
+                    category: true
                 },
                 where: eq(modelsTable.organizationId, orgId)
             });

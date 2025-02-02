@@ -81,7 +81,7 @@ export const Item = pgTable('items', {
     available: boolean('available'),
     manufacturerId: uuid('manufacturer_id').references(() => Manufacturer.id),
     categoryId: uuid('category_id').references(() => Category.id),
-    userId: varchar('user_id'),
+
 });
 export const itemsRelations = relations(Item, ({ one }) => ({
     Status: one(Status, {

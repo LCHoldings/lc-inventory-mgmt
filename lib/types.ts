@@ -46,22 +46,57 @@ export interface Model {
     devices: Device[]
 }
 export interface Item {
-    id: number
+    id: string
     organizationId: string
     name: string
-    modelId: number
-    statusId: number
-    Model: Model
+    statusId: string
+    currentUserId: string
+    locationId: string
+    purchaseCost: string
+    purchaseDate: string
+    supplierId: string
+    purchaseOrderId: string
+    serialNumber: string
+    modelId: string
+    image: string
+    byod: boolean
+    notes: string
+    available: boolean
+    manufacturerId: string
+    categoryId: string
     Status: Status
+    Location: Location
+    Supplier: Supplier
+    Model: Model
+    Manufacturer: Manufacturer
+    category: Category
 }
 export interface Device {
-    id: number
+    id: string
     organizationId: string
     name: string
-    modelId: number
-    statusId: number
-    Model: Model
+    statusId: string
+    currentUserId: string
+    locationId: string
+    purchaseCost: string
+    purchaseDate: string
+    supplierId: string
+    purchaseOrderId: string
+    serialNumber: string
+    modelId: string
+    image: string
+    byod: boolean
+    notes: string
+    available: boolean
+    manufacturerId: string
+    categoryId: string
+
     Status: Status
+    Location: Location
+    Supplier: Supplier
+    Model: Model
+    Manufacturer: Manufacturer
+    category: Category
 }
 export interface Status {
     id: number
@@ -72,13 +107,20 @@ export interface Status {
     items: Item[]
     devices: Device[]
 }
-
+export interface Location
+{
+    id: number
+    organizationId: string
+    name: string
+    items: Item[]
+    devices: Device[]
+}
 export interface CategoryApi {
     error: string | null
     success: boolean
     data: Category[] | null
-
 }
+
 export interface SupplierApi {
     error: string | null
     success: boolean

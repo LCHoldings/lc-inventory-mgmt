@@ -1,8 +1,8 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { currentUser, auth, clerkClient } from '@clerk/nextjs/server'
 import db from "@/db";
-import { Device as deviceTable } from "@/db/schema";
-import DeviceSchema from "@/lib/schemas/DeviceSchema";
+import { Item as itemsTable } from "@/db/schema";
+import ItemSchema from "@/lib/schemas/ItemSchema";
 import { eq, and } from 'drizzle-orm'
 
 export const GET = async function GET(req: NextRequest) {
@@ -11,34 +11,34 @@ export const GET = async function GET(req: NextRequest) {
     if (!userId) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const perms = has({ permission: 'org:device:read' })
+    const perms = has({ permission: 'org:item:read' })
     if (!perms || !orgId) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     try {
-        let devices;
+        let items;
         try {
-            devices = await db.query.Device.findMany({
+            items = await db.query.Item.findMany({
                 with: {
                     Status: true,
                     Location: true,
-                    Supplier: true,
                     Model: true,
-                    Category: true,
+                    Supplier: true,
                     Manufacturer: true,
+                    category: true
                 },
-                where: eq(deviceTable.organizationId, orgId)
+                where: eq(itemsTable.organizationId, orgId)
             });
         } catch (err) {
-            devices = await db.query.Category.findMany({
-                where: eq(deviceTable.organizationId, orgId)
+            items = await db.query.Category.findMany({
+                where: eq(itemsTable.organizationId, orgId)
             });
         }
-        return NextResponse.json({ success: true, data: devices });
+        return NextResponse.json({ success: true, data: items });
     } catch (error) {
         console.log(error)
         return NextResponse.json(
-            { error: "Failed to fetch device" },
+            { error: "Failed to fetch items" },
             { status: 500 }
         );
     }
@@ -52,22 +52,22 @@ export const POST = async function POST(req: NextRequest) {
         if (!userId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-        const perms = has({ permission: 'org:device:write' })
+        const perms = has({ permission: 'org:item:write' })
         if (!perms || !orgId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
         const bodyRaw = await req.json()
-        const response = DeviceSchema.safeParse(bodyRaw);
+        const response = ItemSchema.safeParse(bodyRaw);
         if (!response.success) {
             return NextResponse.json({ error: response.error }, { status: 400 });
         }
-        const { name, statusId, locationId, purchaseCost, purchaseDate, supplierId, purchaseOrderId, serialNumber, modelId, image, byod, notes, available, manufacturerId, categoryId, currentUserId } = response.data;
-        await db.insert(deviceTable).values({ name, statusId, locationId, purchaseCost, purchaseDate: purchaseDate.toISOString(), supplierId, purchaseOrderId, serialNumber, modelId, image, byod, notes, available, manufacturerId, categoryId, currentUserId, organizationId: orgId });
+        const {name, locationId, purchaseCost, purchaseDate, supplierId, purchaseOrderId, serialNumber, modelId, image, byod, notes, available,manufacturerId,categoryId, currentUserId } = response.data;
+        await db.insert(itemsTable).values({ name, locationId, purchaseCost, purchaseDate: purchaseDate.toISOString(), supplierId, purchaseOrderId, serialNumber, modelId, image, byod, notes, available,manufacturerId,currentUserId,categoryId, organizationId: orgId });
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error(error)
         return NextResponse.json(
-            { error: "Failed to create device" },
+            { error: "Failed to create item" },
             { status: 500 }
         );
     }
@@ -81,7 +81,7 @@ export const DELETE = async function DELETE(req: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const perms = has({ permission: 'org:device:destructive' })
+        const perms = has({ permission: 'org:item:delete' })
         if (!perms || !orgId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
@@ -89,13 +89,13 @@ export const DELETE = async function DELETE(req: NextRequest) {
         if (!id) {
             return NextResponse.json({ error: "Invalid request" }, { status: 400 });
         }
-        await db.delete(deviceTable).where(and(eq(deviceTable.id, id), eq(deviceTable.organizationId, orgId)));
+        await db.delete(itemsTable).where(and(eq(itemsTable.id, id), eq(itemsTable.organizationId, orgId)));
 
         return NextResponse.json({ success: true });
     } catch (error) {
         console.log(error)
         return NextResponse.json(
-            { error: "Failed to delete device" },
+            { error: "Failed to delete item" },
             { status: 500 }
         );
     }
@@ -108,7 +108,7 @@ export const PUT = async function PUT(req: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const perms = has({ permission: 'org:device:write' })
+        const perms = has({ permission: 'org:model:write' })
         if (!perms || !orgId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
@@ -117,17 +117,17 @@ export const PUT = async function PUT(req: NextRequest) {
             return NextResponse.json({ error: "Invalid request" }, { status: 400 });
         }
         const bodyRaw = await req.json()
-        const response = DeviceSchema.safeParse(bodyRaw);
+        const response = ItemSchema.safeParse(bodyRaw);
         if (!response.success) {
             return NextResponse.json({ error: response.error }, { status: 400 });
         }
-        const { name, statusId, locationId, purchaseCost, purchaseDate, supplierId, purchaseOrderId, serialNumber, modelId, image, byod, notes, available, manufacturerId, categoryId } = response.data;
-        await db.update(deviceTable).set({   name, statusId, locationId, purchaseCost, purchaseDate: purchaseDate.toISOString(),modelId, supplierId, purchaseOrderId, serialNumber,  image, byod, notes, available, manufacturerId, categoryId }).where(and(eq(deviceTable.id, id), eq(deviceTable.organizationId, orgId)));
+        const {name, locationId, purchaseCost, purchaseDate, supplierId, purchaseOrderId, serialNumber, modelId, image, byod, notes, available,manufacturerId,categoryId, currentUserId } = response.data;
+        await db.update(itemsTable).set({ name, locationId, purchaseCost, purchaseDate: purchaseDate.toISOString(), supplierId, purchaseOrderId, serialNumber, modelId, image, byod, notes, available,manufacturerId,categoryId,currentUserId }).where(and(eq(itemsTable.id, id), eq(itemsTable.organizationId, orgId)));
         return NextResponse.json({ success: true });
     } catch (error) {
         console.log(error)
         return NextResponse.json(
-            { error: "Failed to update device" },
+            { error: "Failed to update manufactoruer" },
             { status: 500 }
         );
     }

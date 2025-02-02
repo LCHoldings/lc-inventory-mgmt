@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 const schema = z.object({
-    id: z.number(),
     name: z.string().max(100).min(1),
     image:z.string().max(100).min(1),
     modelNumber: z.string().max(100).min(1),
