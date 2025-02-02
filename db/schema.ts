@@ -108,6 +108,7 @@ export const itemsRelations = relations(Item, ({ one }) => ({
 
 export const Supplier = pgTable('suppliers', {
     id:  uuid().defaultRandom().primaryKey(),
+    name: varchar('name'),
     organizationId: varchar('organization_id'),
     website: varchar('website'),
     phoneNumber: varchar('phone_number'),

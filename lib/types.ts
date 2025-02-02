@@ -9,6 +9,7 @@ export interface Category {
 }
 export interface Supplier {
     id: number
+    name: string
     organizationId: string
     website: string
     phoneNumber: string
