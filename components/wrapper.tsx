@@ -13,8 +13,6 @@ export function WrapperWithQuery(props: { children: React.ReactNode }) {
     const [currentTheme, setCurrentTheme] = useState(theme);
 
     useEffect(() => {
-        console.log(theme, systemTheme);
-
         if (theme == null) {
             setCurrentTheme(systemTheme);
         } else if (theme === "system") {
@@ -23,6 +21,7 @@ export function WrapperWithQuery(props: { children: React.ReactNode }) {
             setCurrentTheme(theme);
         }
     }, [theme, systemTheme]);
+
     return (
         <QueryClientProvider client={queryClient}>
             <ClerkProvider

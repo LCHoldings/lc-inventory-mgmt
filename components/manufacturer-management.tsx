@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import type * as z from "zod"
 
 // Icons
-import { Pen, Trash2, Plus, CircleCheck, CircleX } from "lucide-react"
+import { Pen, Trash2, Plus } from "lucide-react"
 
 // AG Grid
 import { AgGridReact } from "ag-grid-react"
@@ -19,7 +19,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 // UI components
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import toast from "react-hot-toast"

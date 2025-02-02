@@ -6,9 +6,7 @@ import CategorySchema from "@/lib/schemas/CategorySchema";
 import { auth } from '@clerk/nextjs/server'
 import { eq, and } from 'drizzle-orm'
 
-
-
-export const GET = async function GET(req: NextRequest) {
+export const GET = async function GET() {
     const { userId, orgId, has } = await auth()
 
     if (!userId) {
@@ -29,9 +27,7 @@ export const GET = async function GET(req: NextRequest) {
                 },
                 where: eq(categoryTable.organizationId, orgId)
             });
-        } catch (error) 
-        {
-            console.log(error)
+        } catch {
             categories = await db.query.Category.findMany({
                 where: eq(categoryTable.organizationId, orgId)
             });

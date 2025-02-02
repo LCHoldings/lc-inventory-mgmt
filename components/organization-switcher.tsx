@@ -64,8 +64,8 @@ export function OrganizationSwitcher() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center overflow-hidden justify-center rounded-sm bg-sidebar-primary text-sidebar-primary-foreground">
-                {selectedOrganization.organization?.imageUrl && <Image loading="lazy" src={selectedOrganization.organization?.imageUrl} width={140} height={140} alt="123" />}
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                {selectedOrganization.organization?.imageUrl && <Image className="rounded-lg" loading="lazy" src={selectedOrganization.organization?.imageUrl} width={140} height={140} alt="123" />}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
