@@ -5,7 +5,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/lcholdings/lc-inventory-mgmt">
-    <img src="https://raw.githubusercontent.com/LCHoldings/lc-inventory-mgmt/refs/heads/main/images/Small_LCHoldings.png" alt="Logo" style="border-radius: 10px" width="80" height="80">
+    <img src="https://raw.githubusercontent.com/LCHoldings/lc-inventory-mgmt/refs/heads/main/screenshots/Small_LCHoldings.png" alt="Logo" style="border-radius: 10px" width="80" height="80">
   </a>
 
   <h3 align="center">LC Inventory Management</h3>
