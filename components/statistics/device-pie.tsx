@@ -1,6 +1,6 @@
 "use client"
 
-import { Loader, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import DashPieChart from "./dash-pie-chart";
 import { ChartConfig } from "@/components/ui/chart";
 import { Device } from "@/lib/types";
