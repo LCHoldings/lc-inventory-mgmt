@@ -1,46 +1,49 @@
-/*
+"use client"
+
+import { Loader, Loader2 } from "lucide-react";
 import DashPieChart from "./dash-pie-chart";
 import { ChartConfig } from "@/components/ui/chart";
-import { prisma } from "@/prisma";
-*/
+import { Device } from "@/lib/types";
 
-export default async function DevicePie() {
-    return (
-        <div>
-            <h1>Device Pie</h1>
+// API functions
+import { fetchDevices } from "@/lib/devicesApi"
+
+// React Query
+import { useQuery } from "@tanstack/react-query"
+
+export default function DevicePie() {
+    const chartData: { deviceItem: string; amount: number; fill: string }[] = []
+    const chartConfig: ChartConfig = {}
+
+    const { data: devices, isLoading, isError } = useQuery<Device[], Error>({
+        queryKey: ["devices"],
+        queryFn: fetchDevices,
+    })
+
+    if (isLoading) return (
+        <div className="flex justify-center items-center h-full">
+            <Loader2 className="animate-spin" />
         </div>
     )
-    /*
-    const statusData = await prisma.status.findMany();
-    const chartData = [];
+    if (isError) return <div>Error loading devices</div>
 
-    const chartConfig: ChartConfig = {};
+    // Group devices by status
+    const devicesByStatus = devices?.reduce((acc, device) => {
+        const status = device.Status.name.toLowerCase()
+        acc[status] = (acc[status] || 0) + 1
+        return acc
+    }, {} as Record<string, number>) || {}
 
-    for (const status of statusData) {
-        const devices = await prisma.device.count({
-            where: {
-                statusId: status.id,
-            },
-        });
-
+    // Create chart data
+    Object.entries(devicesByStatus).forEach(([status, count]) => {
         chartData.push({
-            deviceItem: status.name.toLowerCase(),
-            amount: devices,
-            fill: status.color,
-        });
-
-        chartConfig[status.name.toLowerCase()] = {
-            label: status.name,
-            color: status.color,
-        };
-    }
-
-    chartConfig["devices"] = { label: "Devices" };
-
-    console.log(chartData);
-    console.log(chartConfig);
+            deviceItem: status,
+            amount: count,
+            fill: devices?.find(d => d.Status.name.toLowerCase() === status)?.Status.color || '#000',
+        })
+    })
 
     return (
         <DashPieChart chartData={chartData} chartConfig={chartConfig} title="Devices" description="This pie chart shows the amount of devices by status." />
-    );*/
+    )
 }

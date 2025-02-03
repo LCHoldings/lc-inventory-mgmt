@@ -1,11 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server'
-import { currentUser, auth, clerkClient } from '@clerk/nextjs/server'
+import { auth } from '@clerk/nextjs/server'
 import db from "@/db";
 import { Manufacturer as manufacturerTable } from "@/db/schema";
 import ManufacturerSchema from "@/lib/schemas/ManufacturerSchema";
 import { eq, and } from 'drizzle-orm'
 
-export const GET = async function GET(req: NextRequest) {
+export const GET = async function GET() {
     const { userId, orgId, has } = await auth()
 
     if (!userId) {

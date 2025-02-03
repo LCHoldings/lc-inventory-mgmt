@@ -1,17 +1,11 @@
 "use client"
 
+import { Fragment } from "react"
 import { SidebarTrigger } from "./ui/sidebar"
 import { Separator } from "./ui/separator"
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from "./ui/breadcrumb"
 import { useRouter } from "next/navigation"
-
-type DashHeaderProps = {
-    title: string
-    breadcrumbs: {
-        label: string
-        href: string
-    }[]
-}
+import { DashHeaderProps } from "@/lib/types"
 
 export function DashHeader({ title, breadcrumbs }: DashHeaderProps) {
     const router = useRouter()
@@ -23,15 +17,16 @@ export function DashHeader({ title, breadcrumbs }: DashHeaderProps) {
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 <Breadcrumb>
                     <BreadcrumbList>
-                        {breadcrumbs.map((breadcrumb, index) => (
-                            <>
-                                <BreadcrumbItem key={index}>
+                        {breadcrumbs && breadcrumbs.map((breadcrumb, index) => (
+                            <Fragment key={index}>
+                                <BreadcrumbItem>
                                     <BreadcrumbLink onClick={() => router.push(breadcrumb.href)}>
                                         {breadcrumb.label}
                                     </BreadcrumbLink>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
-                            </>
+                            </Fragment>
+
                         ))}
                         <BreadcrumbItem>
                             <BreadcrumbPage>{title}</BreadcrumbPage>

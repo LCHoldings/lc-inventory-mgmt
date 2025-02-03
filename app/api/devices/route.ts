@@ -1,11 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server'
-import { currentUser, auth, clerkClient } from '@clerk/nextjs/server'
+import { auth } from '@clerk/nextjs/server'
 import db from "@/db";
 import { Device as deviceTable } from "@/db/schema";
 import DeviceSchema from "@/lib/schemas/DeviceSchema";
 import { eq, and } from 'drizzle-orm'
 
-export const GET = async function GET(req: NextRequest) {
+export const GET = async function GET() {
     const { userId, orgId, has } = await auth()
 
     if (!userId) {
@@ -29,7 +29,7 @@ export const GET = async function GET(req: NextRequest) {
                 },
                 where: eq(deviceTable.organizationId, orgId)
             });
-        } catch (err) {
+        } catch {
             devices = await db.query.Category.findMany({
                 where: eq(deviceTable.organizationId, orgId)
             });
@@ -62,7 +62,7 @@ export const POST = async function POST(req: NextRequest) {
             return NextResponse.json({ error: response.error }, { status: 400 });
         }
         const { name, statusId, locationId, purchaseCost, purchaseDate, supplierId, purchaseOrderId, serialNumber, modelId, image, byod, notes, available, manufacturerId, categoryId, currentUserId } = response.data;
-        await db.insert(deviceTable).values({ name, statusId, locationId, purchaseCost, purchaseDate: purchaseDate.toISOString(), supplierId, purchaseOrderId, serialNumber, modelId, image, byod, notes, available, manufacturerId, categoryId, currentUserId, organizationId: orgId });
+        await db.insert(deviceTable).values({ name, statusId, locationId, purchaseCost, purchaseDate, supplierId, purchaseOrderId, serialNumber, modelId, image, byod, notes, available, manufacturerId, categoryId, currentUserId, organizationId: orgId });
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error(error)
@@ -122,7 +122,7 @@ export const PUT = async function PUT(req: NextRequest) {
             return NextResponse.json({ error: response.error }, { status: 400 });
         }
         const { name, statusId, locationId, purchaseCost, purchaseDate, supplierId, purchaseOrderId, serialNumber, modelId, image, byod, notes, available, manufacturerId, categoryId } = response.data;
-        await db.update(deviceTable).set({   name, statusId, locationId, purchaseCost, purchaseDate: purchaseDate.toISOString(),modelId, supplierId, purchaseOrderId, serialNumber,  image, byod, notes, available, manufacturerId, categoryId }).where(and(eq(deviceTable.id, id), eq(deviceTable.organizationId, orgId)));
+        await db.update(deviceTable).set({   name, statusId, locationId, purchaseCost, purchaseDate, modelId, supplierId, purchaseOrderId, serialNumber,  image, byod, notes, available, manufacturerId, categoryId }).where(and(eq(deviceTable.id, id), eq(deviceTable.organizationId, orgId)));
         return NextResponse.json({ success: true });
     } catch (error) {
         console.log(error)

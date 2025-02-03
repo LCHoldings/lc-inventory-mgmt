@@ -20,7 +20,7 @@ export async function createCategory(category: Omit<Category, "id" | "organizati
     }
 }
 
-export async function updateCategory(category: Partial<Category> & { id: number }): Promise<void> {
+export async function updateCategory(category: Partial<Category> & { id: string }): Promise<void> {
     const response = await fetch(`/api/categories?id=${category.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -32,7 +32,7 @@ export async function updateCategory(category: Partial<Category> & { id: number 
     }
 }
 
-export async function deleteCategory(id: number): Promise<void> {
+export async function deleteCategory(id: string): Promise<void> {
     const response = await fetch(`/api/categories?id=${id}`, {
         method: "DELETE",
     })

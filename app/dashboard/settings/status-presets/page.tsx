@@ -1,66 +1,26 @@
-'use client'
-
-import { useRouter } from 'next/navigation';
-import { redirect } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import {
-    SidebarInset,
-    SidebarProvider,
-    SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { StatusManagement } from "@/components/status-management"
-import { useUser, useAuth } from '@clerk/nextjs';
-export default function Page() {
-    const { user } = useUser();
-    const { isLoaded } = useAuth();
-    const router = useRouter();
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { StatusManagement } from "@/components/tables/status-management"
+import { DashHeader } from '@/components/dash-header';
+import AuthWrapper from '@/components/auth-wrapper';
 
-    if (isLoaded && !user?.id) {
-        redirect('/signin')
-    }
+const breadcrumbs = [
+    { label: 'Dashboard', href: '/dashboard' },
+    { label: 'Settings', href: '/dashboard/settings' },
+]
+
+export default function Page() {
     return (
-        <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2 bg-sidebar border-b">
-                    <div className="flex items-center gap-2 px-4">
-                        <SidebarTrigger className="-ml-1" />
-                        <Separator orientation="vertical" className="mr-2 h-4" />
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink onClick={() => router.push('/dashboard')}>
-                                        Dashboard
-                                    </BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
-                                <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink onClick={() => router.push('/dashboard/settings')}>
-                                        Settings
-                                    </BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
-                                <BreadcrumbItem>
-                                    <BreadcrumbPage>Status Presets</BreadcrumbPage>
-                                </BreadcrumbItem>
-                            </BreadcrumbList>
-                        </Breadcrumb>
+        <AuthWrapper>
+            <SidebarProvider>
+                <AppSidebar />
+                <SidebarInset>
+                    <DashHeader title="Status Presets" breadcrumbs={breadcrumbs} />
+                    <div className="flex flex-1 flex-col gap-4 p-8">
+                        <StatusManagement />
                     </div>
-                </header>
-                <div className="flex flex-1 flex-col gap-4 p-8">
-                    <StatusManagement />
-                </div>
-            </SidebarInset>
-        </SidebarProvider>
+                </SidebarInset>
+            </SidebarProvider>
+        </AuthWrapper>
     )
 }
-

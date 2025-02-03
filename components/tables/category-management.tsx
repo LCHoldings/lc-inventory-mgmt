@@ -19,8 +19,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 // UI components
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import toast from "react-hot-toast"
 
 // Schemas and types
@@ -35,7 +36,6 @@ import Loader from "@/components/loader"
 
 // Theme
 import { lcTheme } from "@/lib/utils"
-import { Select } from "./ui/select"
 
 export function CategoryManagement() {
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
@@ -57,7 +57,7 @@ export function CategoryManagement() {
         onError: (error: Error) => toast.error(error.message || "Failed to create Category")
     })
 
-    const updateMutation = useMutation<void, Error, Partial<Category> & { id: number }>({
+    const updateMutation = useMutation<void, Error, Partial<Category> & { id: string }>({
         mutationFn: updateCategory,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["categories"] })
@@ -67,7 +67,7 @@ export function CategoryManagement() {
         onError: (error: Error) => toast.error(error.message || "Failed to update Category")
     })
 
-    const deleteMutation = useMutation<void, Error, number>({
+    const deleteMutation = useMutation<void, Error, string>({
         mutationFn: deleteCategory,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["categories"] })
@@ -156,81 +156,93 @@ export function CategoryManagement() {
     }), [])
 
     if (isLoading) return <Loader />
-    if (isError) return <div>Error loading statuses</div>
+    if (isError) return <div>Error loading categories</div>
 
     return (
-        <div className="space-y-8">
-            <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold">Categories</h2>
-                <Button onClick={() => setIsAddDialogOpen(true)}>
-                    <Plus className="mr-2 h-4 w-4" /> Add New Status
-                </Button>
-            </div>
+        <div className="flex flex-1 flex-col gap-4 p-8">
+            <div className="space-y-8">
+                <div className="flex justify-between items-center">
+                    <h2 className="text-3xl font-bold">Categories</h2>
 
-            <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
-                <AgGridReact
-                    rowData={categories}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    animateRows={true}
-                    rowSelection="multiple"
-                    pagination={true}
-                    columnHoverHighlight={true}
-                    paginationPageSize={20}
-                    theme={lcTheme}
-                />
-            </div>
+                    <Button onClick={() => setIsAddDialogOpen(true)}>
+                        <Plus className="mr-2 h-4 w-4" /> Add New Category
+                    </Button>
+                </div>
 
-            <Dialog
-                open={isAddDialogOpen || !!editingCategory}
-                onOpenChange={(open) => {
-                    if (!open) {
-                        setIsAddDialogOpen(false)
-                        setEditingCategory(null)
-                    }
-                }}
-            >
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>{editingCategory ? "Edit Category" : "Add New Category"}</DialogTitle>
-                    </DialogHeader>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                defaultValue={editingCategory?.name}
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Category Name</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter category name" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="type"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Type</FormLabel>
-                                        <FormControl>
-                                            <Select {...field}>
-                                                <option value="device">Device</option>
-                                                <option value="item">Item</option>
+
+                <div className="ag-theme-alpine h-[80vh] w-full">
+                    <AgGridReact
+                        rowData={categories}
+                        columnDefs={columnDefs}
+                        defaultColDef={defaultColDef}
+                        animateRows={true}
+                        rowSelection="multiple"
+                        pagination={true}
+                        columnHoverHighlight={true}
+                        paginationPageSize={20}
+                        theme={lcTheme}
+                    />
+                </div>
+
+                <Dialog
+                    open={isAddDialogOpen || !!editingCategory}
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setIsAddDialogOpen(false)
+                            setEditingCategory(null)
+                        }
+                    }}
+                >
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>{editingCategory ? "Edit Category" : "Add New Category"}</DialogTitle>
+                        </DialogHeader>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    defaultValue={editingCategory?.name}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Category Name</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Enter category name" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="type"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Category Type</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Device" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="device">Device</SelectItem>
+                                                    <SelectItem value="item">Item</SelectItem>
+                                                </SelectContent>
                                             </Select>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <Button type="submit">{editingCategory ? "Update" : "Add"} Category</Button>
-                        </form>
-                    </Form>
-                </DialogContent>
-            </Dialog>
+                                            <FormDescription>
+                                                This will determine if the category is for a device or an item.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button type="submit">{editingCategory ? "Update" : "Add"} Category</Button>
+                            </form>
+                        </Form>
+                    </DialogContent>
+                </Dialog>
+            </div>
         </div>
     )
 }

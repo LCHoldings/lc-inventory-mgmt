@@ -20,15 +20,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import toast from "react-hot-toast"
 
 // Schemas and types
-import ManufacturerSchema from '@/lib/schemas/ManufacturerSchema';
-import type { Manufacturer } from "@/lib/types"
+import SupplierSchema from '@/lib/schemas/SupplierSchema';
+import type { Supplier } from "@/lib/types"
 
 // API functions
-import { fetchManufacturers, deleteManufacturer, updateManufacturer, createManufacturer } from "@/lib/manufacturersApi"
+import { createSupplier, deleteSupplier, updateSupplier, fetchSuppliers } from "@/lib/suppliersApi"
 
 // Loader component
 import Loader from "@/components/loader"
@@ -36,60 +36,55 @@ import Loader from "@/components/loader"
 // Theme
 import { lcTheme } from "@/lib/utils"
 
-export function ManufacturerManagement() {
+export function SupplierManagement() {
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-    const [editingStatus, setEditingStatus] = useState<Manufacturer | null>(null)
+    const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null)
     const queryClient = useQueryClient()
 
-    const { data: manufacturers, isLoading, isError } = useQuery<Manufacturer[], Error>({
-        queryKey: ["manufacturers"],
-        queryFn: fetchManufacturers,
+    const { data: suppliers, isLoading, isError } = useQuery<Supplier[], Error>({
+        queryKey: ["suppliers"],
+        queryFn: fetchSuppliers,
     })
 
-    const createMutation = useMutation<void, Error, z.infer<typeof ManufacturerSchema>>({
-        mutationFn: (manufacturer) => createManufacturer({ ...manufacturer }),
+    const createMutation = useMutation<void, Error, z.infer<typeof SupplierSchema>>({
+        mutationFn: (supplier) => createSupplier({ ...supplier }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["manufacturers"] })
-            toast.success("Manufacturer created successfully")
+            queryClient.invalidateQueries({ queryKey: ["suppliers"] })
+            toast.success("Supplier created successfully")
             setIsAddDialogOpen(false)
         },
-        onError: (error: Error) => toast.error(error.message || "Failed to create Manufacturer")
+        onError: (error: Error) => toast.error(error.message || "Failed to create supplier")
     })
 
-    const updateMutation = useMutation<void, Error, Partial<Manufacturer> & { id: number }>({
-        mutationFn: updateManufacturer,
+    const updateMutation = useMutation<void, Error, Partial<Supplier> & { id: string }>({
+        mutationFn: updateSupplier,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["manufacturers"] })
-            toast.success("Manufacturer updated successfully")
-            setEditingStatus(null)
+            queryClient.invalidateQueries({ queryKey: ["suppliers"] })
+            toast.success("Supplier updated successfully")
+            setEditingSupplier(null)
         },
-        onError: (error: Error) => toast.error(error.message || "Failed to update Manufacturer")
+        onError: (error: Error) => toast.error(error.message || "Failed to update supplier")
     })
 
-    const deleteMutation = useMutation<void, Error, number>({
-        mutationFn: deleteManufacturer,
+    const deleteMutation = useMutation<void, Error, string>({
+        mutationFn: deleteSupplier,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["manufacturers"] })
-            toast.success("Manufacturer deleted successfully")
+            queryClient.invalidateQueries({ queryKey: ["suppliers"] })
+            toast.success("Supplier deleted successfully")
         },
-        onError: (error: Error) => toast.error(error.message || "Failed to delete Manufacturer")
+        onError: (error: Error) => toast.error(error.message || "Failed to delete supplier")
     })
 
-    const form = useForm<z.infer<typeof ManufacturerSchema>>({
-        resolver: zodResolver(ManufacturerSchema),
+    const form = useForm<z.infer<typeof SupplierSchema>>({
+        resolver: zodResolver(SupplierSchema),
         defaultValues: {
-            siteUrl: "",
-            supportUrl: "",
-            supportPhone: "",
-            supportEmail: "",
             name: "",
-            image: "",
         },
     })
 
-    const onSubmit = (values: z.infer<typeof ManufacturerSchema>) => {
-        if (editingStatus) {
-            updateMutation.mutate({ id: editingStatus.id, ...values })
+    const onSubmit = (values: z.infer<typeof SupplierSchema>) => {
+        if (editingSupplier) {
+            updateMutation.mutate({ id: editingSupplier.id, ...values })
         } else {
             createMutation.mutate(values)
         }
@@ -102,33 +97,32 @@ export function ManufacturerManagement() {
             flex: 1,
         },
         {
-            field: "supportUrl",
-            headerName: "Support Page",
+            field: "website",
+            headerName: "Website",
             flex: 1,
-            sortable: false,
-            cellRenderer: (params: ICellRendererParams) => (
-                <a href={params.data.supportUrl} target="_blank" rel="noreferrer">{params.data.supportUrl}</a>
-            ),
         },
         {
-            field: "supportPhone",
-            headerName: "Support Phone",
+            field: "phoneNumber",
+            headerName: "Phone Number",
             flex: 1,
-            sortable: false,
-            cellRenderer: (params: ICellRendererParams) => (
-                <a href={"tel:" + params.data.supportPhone} target="_blank" rel="noreferrer">{params.data.supportPhone}</a>
-            ),
         },
         {
-            field: "supportEmail",
-            headerName: "Support Email",
+            field: "contactPerson",
+            headerName: "Contact Person",
             flex: 1,
-            sortable: false,
-            cellRenderer: (params: ICellRendererParams) => (
-                <a href={"mailto:" + params.data.supportEmail} target="_blank" rel="noreferrer">{params.data.supportEmail}</a>
-            ),
         },
         {
+            field: "postAdress",
+            headerName: "Post Address",
+            flex: 1,
+        },
+        {
+            field: "emailAdress",
+            headerName: "Email Address",
+            flex: 1,
+        },
+        {
+            field: "items",
             headerName: "Items",
             flex: 1,
             maxWidth: 100,
@@ -137,19 +131,12 @@ export function ManufacturerManagement() {
             )
         },
         {
+            field: "devices",
             headerName: "Devices",
             flex: 1,
             maxWidth: 100,
             cellRenderer: (params: ICellRendererParams) => (
                 params.data.devices.length
-            )
-        },
-        {
-            "headerName": "Models",
-            "flex": 1,
-            maxWidth: 100,
-            "cellRenderer": (params: ICellRendererParams) => (
-                params.data.models.length
             )
         },
         {
@@ -163,7 +150,7 @@ export function ManufacturerManagement() {
                         <Trash2 className="h-4 w-4" />
                         Delete
                     </Button>
-                    <Button variant="default" size="sm" onClick={() => setEditingStatus(params.data)}>
+                    <Button variant="default" size="sm" onClick={() => setEditingSupplier(params.data)}>
                         <Pen className="h-4 w-4" />
                         Edit
                     </Button>
@@ -178,20 +165,20 @@ export function ManufacturerManagement() {
     }), [])
 
     if (isLoading) return <Loader />
-    if (isError) return <div>Error loading statuses</div>
+    if (isError) return <div>Error loading suppliers</div>
 
     return (
         <div className="space-y-8">
             <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold">Manufacturers</h2>
+                <h2 className="text-3xl font-bold">Locations</h2>
                 <Button onClick={() => setIsAddDialogOpen(true)}>
-                    <Plus className="mr-2 h-4 w-4" /> Add New Status
+                    <Plus className="mr-2 h-4 w-4" /> Add New Supplier
                 </Button>
             </div>
 
-            <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
+            <div className="ag-theme-alpine h-[80vh] w-full">
                 <AgGridReact
-                    rowData={manufacturers}
+                    rowData={suppliers}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     animateRows={true}
@@ -204,29 +191,32 @@ export function ManufacturerManagement() {
             </div>
 
             <Dialog
-                open={isAddDialogOpen || !!editingStatus}
+                open={isAddDialogOpen || !!editingSupplier}
                 onOpenChange={(open) => {
                     if (!open) {
                         setIsAddDialogOpen(false)
-                        setEditingStatus(null)
+                        setEditingSupplier(null)
                     }
                 }}
             >
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>{editingStatus ? "Edit Status" : "Add New Status"}</DialogTitle>
+                        <DialogTitle>{editingSupplier ? "Edit Supplier" : "Add New Supplier"}</DialogTitle>
                     </DialogHeader>
+                    <DialogDescription>
+                        <span className="text-md text-muted-foreground">Supplier is a company that provides products and services to the organization.</span>
+                    </DialogDescription>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                             <FormField
                                 control={form.control}
                                 name="name"
-                                defaultValue={editingStatus?.name}
+                                defaultValue={editingSupplier?.name}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Manufacturer Name</FormLabel>
+                                        <FormLabel>Supplier Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter manufacturer name" {...field} />
+                                            <Input placeholder="Enter supplier name" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -234,12 +224,12 @@ export function ManufacturerManagement() {
                             />
                             <FormField
                                 control={form.control}
-                                name="siteUrl"
+                                name="website"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Site URL</FormLabel>
+                                        <FormLabel>Website</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter site URL" {...field} />
+                                            <Input placeholder="Enter website" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -247,12 +237,12 @@ export function ManufacturerManagement() {
                             />
                             <FormField
                                 control={form.control}
-                                name="supportUrl"
+                                name="phoneNumber"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Support URL</FormLabel>
+                                        <FormLabel>Phone Number</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter support URL" {...field} />
+                                            <Input placeholder="Enter phone number" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -260,12 +250,12 @@ export function ManufacturerManagement() {
                             />
                             <FormField
                                 control={form.control}
-                                name="supportPhone"
+                                name="contactPerson"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Support Phone</FormLabel>
+                                        <FormLabel>Contact Person</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter support phone" {...field} />
+                                            <Input placeholder="Enter contact person" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -273,12 +263,12 @@ export function ManufacturerManagement() {
                             />
                             <FormField
                                 control={form.control}
-                                name="supportEmail"
+                                name="emailAdress"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Support Email</FormLabel>
+                                        <FormLabel>Email Address</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter support email" {...field} />
+                                            <Input placeholder="Enter email address" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -286,18 +276,18 @@ export function ManufacturerManagement() {
                             />
                             <FormField
                                 control={form.control}
-                                name="image"
+                                name="postAdress"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Image URL</FormLabel>
+                                        <FormLabel>Post Address</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter image URL" {...field} />
+                                            <Input placeholder="Enter post address" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit">{editingStatus ? "Update" : "Add"} Manufacturer</Button>
+                            <Button type="submit">{editingSupplier ? "Update" : "Add"} Supplier</Button>
                         </form>
                     </Form>
                 </DialogContent>

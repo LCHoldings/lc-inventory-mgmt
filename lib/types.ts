@@ -1,5 +1,15 @@
+export type DashHeaderProps = {
+    title: string
+    breadcrumbs?: Breadcrumb[]
+}
+
+export type Breadcrumb = {
+    label: string
+    href: string
+}
+
 export interface Category {
-    id: number
+    id: string
     organizationId: string
     name: string
     type: string
@@ -8,7 +18,7 @@ export interface Category {
     devices: Device[]
 }
 export interface Supplier {
-    id: number
+    id: string
     name: string
     organizationId: string
     website: string
@@ -20,7 +30,7 @@ export interface Supplier {
     devices: Device[]
 }
 export interface Manufacturer {
-    id: number
+    id: string
     organizationId: string
     siteUrl: string
     supportUrl: string
@@ -33,7 +43,7 @@ export interface Manufacturer {
     items: Item[]
 }
 export interface Model {
-    id: number
+    id: string
     organizationId: string
     name: string
     image: string
@@ -99,7 +109,7 @@ export interface Device {
     category: Category
 }
 export interface Status {
-    id: number
+    id: string
     organizationId: string
     name: string
     color: string
@@ -109,11 +119,16 @@ export interface Status {
 }
 export interface Location
 {
-    id: number
+    id: string
     organizationId: string
     name: string
     items: Item[]
     devices: Device[]
+}
+export interface LocationApi {
+    error: string | null
+    success: boolean
+    data: Location[] | null
 }
 export interface CategoryApi {
     error: string | null

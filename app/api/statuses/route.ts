@@ -3,12 +3,10 @@ import { NextResponse, NextRequest } from "next/server";
 import db from "@/db";
 import { Status as statusTable } from "@/db/schema";
 import statusSchema from "@/lib/schemas/StatusSchema";
-import { currentUser, auth, clerkClient } from '@clerk/nextjs/server'
+import { auth} from '@clerk/nextjs/server'
 import { eq, and } from 'drizzle-orm'
 
-//import { checkPermission } from "@/lib/utils";
-
-export const GET = async function GET(req: NextRequest) {
+export const GET = async function GET() {
     const { userId, orgId, has } = await auth()
 
     if (!userId) {
@@ -28,7 +26,7 @@ export const GET = async function GET(req: NextRequest) {
                 },
                 where: eq(statusTable.organizationId, orgId)
             });
-        } catch (err) {
+        } catch {
             Status = await db.query.Status.findMany({
                 where: eq(statusTable.organizationId, orgId)
             });

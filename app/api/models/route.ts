@@ -1,11 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server'
-import { currentUser, auth, clerkClient } from '@clerk/nextjs/server'
+import { auth } from '@clerk/nextjs/server'
 import db from "@/db";
 import { Model as modelsTable } from "@/db/schema";
 import ModelSchema from "@/lib/schemas/ModelSchema";
 import { eq, and } from 'drizzle-orm'
 
-export const GET = async function GET(req: NextRequest) {
+export const GET = async function GET() {
     const { userId, orgId, has } = await auth()
 
     if (!userId) {
@@ -27,7 +27,7 @@ export const GET = async function GET(req: NextRequest) {
                 },
                 where: eq(modelsTable.organizationId, orgId)
             });
-        } catch (err) {
+        } catch {
             models = await db.query.Category.findMany({
                 where: eq(modelsTable.organizationId, orgId)
             });

@@ -1,11 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server'
-import { currentUser, auth, clerkClient } from '@clerk/nextjs/server'
+import { auth } from '@clerk/nextjs/server'
 import db from "@/db";
 import { Location as locationTable } from "@/db/schema";
 import LocationSchema from "@/lib/schemas/LocationSchema";
 import { eq, and } from 'drizzle-orm'
 
-export const GET = async function GET(req: NextRequest) {
+export const GET = async function GET() {
     const { userId, orgId, has } = await auth()
 
     if (!userId) {
@@ -25,7 +25,7 @@ export const GET = async function GET(req: NextRequest) {
                 },
                 where: eq(locationTable.organizationId, orgId)
             });
-        } catch (err) {
+        } catch  {
             locations = await db.query.Location.findMany({
                 where: eq(locationTable.organizationId, orgId)
             });

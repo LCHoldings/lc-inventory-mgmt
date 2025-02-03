@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { DashHeader } from "@/components/dash-header"
-import { DeviceManagement } from "@/components/tables/device-management"
+import { ItemManagement } from "@/components/tables/item-management"
 import AuthWrapper from "@/components/auth-wrapper"
 
 const breadcrumbs = [
@@ -14,9 +14,9 @@ export default function Page() {
             <SidebarProvider>
                 <AppSidebar />
                 <SidebarInset>
-                    <DashHeader title="Devices" breadcrumbs={breadcrumbs} />
+                    <DashHeader title="Items" breadcrumbs={breadcrumbs} />
                     <div className="flex flex-1 flex-col gap-4 p-8">
-                        <DeviceManagement />
+                        <ItemManagement />
                     </div>
                 </SidebarInset>
             </SidebarProvider>

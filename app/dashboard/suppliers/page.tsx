@@ -1,8 +1,9 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { SupplierManagement } from '@/components/tables/supplier-management'
 import { DashHeader } from "@/components/dash-header"
-import { DeviceManagement } from "@/components/tables/device-management"
 import AuthWrapper from "@/components/auth-wrapper"
+
 
 const breadcrumbs = [
     { label: 'Dashboard', href: '/dashboard' },
@@ -14,9 +15,9 @@ export default function Page() {
             <SidebarProvider>
                 <AppSidebar />
                 <SidebarInset>
-                    <DashHeader title="Devices" breadcrumbs={breadcrumbs} />
+                    <DashHeader title="Product Models" breadcrumbs={breadcrumbs} />
                     <div className="flex flex-1 flex-col gap-4 p-8">
-                        <DeviceManagement />
+                        <SupplierManagement />
                     </div>
                 </SidebarInset>
             </SidebarProvider>

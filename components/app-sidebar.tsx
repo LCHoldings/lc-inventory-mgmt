@@ -8,6 +8,8 @@ import {
   Laptop,
   Hammer,
   List,
+  MapPin,
+  Truck,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav/nav-main"
@@ -44,6 +46,16 @@ const data = {
       title: "Product Models",
       icon: List,
       url: "/dashboard/product-models"
+    },
+    {
+      title: "Locations",
+      icon: MapPin,
+      url: "/dashboard/locations",
+    },
+    {
+      title: "Suppliers",
+      icon: Truck,
+      url: "/dashboard/suppliers",
     },
     {
       title: "Settings",

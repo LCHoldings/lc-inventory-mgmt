@@ -1,6 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { CategoryManagement } from "@/components/category-management"
+import { CategoryManagement } from "@/components/tables/category-management"
 import { DashHeader } from '@/components/dash-header'
 import AuthWrapper from "@/components/auth-wrapper"
 

@@ -20,7 +20,7 @@ export async function createManufacturer(manufacturer: Omit<Manufacturer, "id" |
     }
 }
 
-export async function updateManufacturer(manufacturer: Partial<Manufacturer> & { id: number }): Promise<void> {
+export async function updateManufacturer(manufacturer: Partial<Manufacturer> & { id: string }): Promise<void> {
     const response = await fetch(`/api/manufacturers?id=${manufacturer.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -32,7 +32,7 @@ export async function updateManufacturer(manufacturer: Partial<Manufacturer> & {
     }
 }
 
-export async function deleteManufacturer(id: number): Promise<void> {
+export async function deleteManufacturer(id: string): Promise<void> {
     const response = await fetch(`/api/manufacturers?id=${id}`, {
         method: "DELETE",
     })

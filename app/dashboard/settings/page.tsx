@@ -1,66 +1,29 @@
-"use client"
-
-import { useRouter } from 'next/navigation';
-import { useEffect } from "react"
-
 import { AppSidebar } from "@/components/app-sidebar"
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbSeparator,
-    BreadcrumbPage
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import {
-    SidebarInset,
-    SidebarProvider,
-    SidebarTrigger,
-} from "@/components/ui/sidebar"
-import { redirect } from "next/navigation";
-import { useUser, useAuth } from '@clerk/nextjs';
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { DashHeader } from '@/components/dash-header';
+import AuthWrapper from '@/components/auth-wrapper';
+
+const breadcrumbs = [
+    { label: 'Dashboard', href: '/dashboard' },
+]
 
 export default function Page() {
-    const { user } = useUser();
-    const { isLoaded } = useAuth();
-    const router = useRouter();
-
-    if (isLoaded && !user?.id) {
-        redirect('/signin')
-    }
     return (
-        <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-                <header className="flex h-16 shrink-0 items-center gap-2">
-                    <div className="flex items-center gap-2 px-4">
-                        <SidebarTrigger className="-ml-1" />
-                        <Separator orientation="vertical" className="mr-2 h-4" />
-                        <Breadcrumb>
-                            <BreadcrumbList>
-                                <BreadcrumbItem className="hidden md:block">
-                                    <BreadcrumbLink onClick={() => router.push('/dashboard')}>
-                                        Dashboard
-                                    </BreadcrumbLink>
-                                </BreadcrumbItem>
-                                <BreadcrumbSeparator className="hidden md:block" />
-                                <BreadcrumbItem>
-                                    <BreadcrumbPage>Settings</BreadcrumbPage>
-                                </BreadcrumbItem>
-                            </BreadcrumbList>
-                        </Breadcrumb>
-                    </div>
-                </header>
-                <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <AuthWrapper>
+            <SidebarProvider>
+                <AppSidebar />
+                <SidebarInset>
+                    <DashHeader title="Settings" breadcrumbs={breadcrumbs} />
+                    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                         <div className="aspect-video rounded-xl bg-muted/50" />
                         <div className="aspect-video rounded-xl bg-muted/50" />
                         <div className="aspect-video rounded-xl bg-muted/50" />
                     </div>
                     <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-                </div>
-            </SidebarInset>
-        </SidebarProvider>
+                    </div>
+                </SidebarInset>
+            </SidebarProvider>
+        </AuthWrapper>
     )
 }

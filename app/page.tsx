@@ -1,8 +1,6 @@
-"use client"
-
-import { useRouter } from "next/navigation";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
 import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -19,6 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { ChevronDown } from 'lucide-react';
 
 const routes = [
@@ -27,16 +26,9 @@ const routes = [
   { id: '/signup', label: 'Signup' },
 ];
 
-export default function Home() {
-  const router = useRouter();
-  const { isLoaded } = useAuth()
-  const { user } = useUser()
+export default async function Home() {
+  const user = await currentUser()
 
-  if (!isLoaded) {
-    return <div>Loading...</div>
-  }
-
-  console.log(user)
 
   return (
     <div className="flex flex-col gap-4 h-screen w-full items-center justify-center px-4 bg-gradient-to-br from-primary/20 to-secondary/20">
@@ -45,9 +37,14 @@ export default function Home() {
           <CardTitle>Home</CardTitle>
         </CardHeader>
         <CardContent>
-          <pre>ok</pre>
+          { user ? (
+            <pre>You are logged in as {user.fullName}</pre>
+          ) : (
+            <pre>You are not logged in</pre>
+          )}
         </CardContent>
         <CardFooter className="gap-2">
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
@@ -61,8 +58,8 @@ export default function Home() {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 {routes.map((route) => (
-                  <DropdownMenuItem onClick={() => router.push(route.id)} key={route.id}>
-                    <a>{route.label}</a>
+                  <DropdownMenuItem key={route.id}>
+                    <a href={route.id}>{route.label}</a>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuGroup>

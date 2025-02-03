@@ -73,17 +73,20 @@ export function NavUser() {
               )}
 
               {isLoaded ? (
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{userData.name}</span>
-                  <span className="truncate text-xs">{userData.email}</span>
-                </div>
+                <>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">{userData.name}</span>
+                    <span className="truncate text-xs">{userData.email}</span>
+                  </div>
+                  <ChevronsUpDown className="ml-auto size-4" />
+                </>
               ) : (
                 <div className="grid flex-1 text-left text-sm gap-1.5 leading-tight">
                   <Skeleton className="rounded-lg w-24 h-3" />
                   <Skeleton className="rounded-lg w-32 h-2" />
                 </div>
               )}
-              <ChevronsUpDown className="ml-auto size-4" />
+
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -120,10 +123,10 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-                <DropdownMenuItem onClick={() => openUserProfile()}>
+              <DropdownMenuItem onClick={() => openUserProfile()}>
                 <BadgeCheck />
                 Account
-                </DropdownMenuItem>
+              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut()} >

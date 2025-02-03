@@ -7,7 +7,7 @@ import * as React from "react"
 import { ChevronsUpDown, Plus, Settings } from "lucide-react"
 
 // UI
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuShortcut, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import toast from "react-hot-toast"
@@ -17,6 +17,7 @@ import Image from 'next/image'
 
 // Clerk
 import { useOrganizationList, useOrganization, useClerk } from '@clerk/nextjs'
+import { getRoleName } from "@/lib/utils"
 
 
 export function OrganizationSwitcher() {
@@ -32,10 +33,6 @@ export function OrganizationSwitcher() {
 
   const selectedOrganization = useOrganization();
 
-  if (!isLoaded) {
-    return <Skeleton className="h-8 w-full" />
-  }
-
   function setOrganization(organizationId: string) {
     const toastId = toast.loading("Changing organization...");
 
@@ -47,7 +44,7 @@ export function OrganizationSwitcher() {
       toast.error("An error occurred while switching to the selected organization", { id: toastId });
       console.error(error);
     } finally {
-      toast.success("You have successfully switched to the selected organization", { id: toastId });
+      toast.success("You have successfully switched to the selected organization. Redirecting...", { id: toastId });
 
       setTimeout(() => {
         window.location.reload();
@@ -64,15 +61,42 @@ export function OrganizationSwitcher() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                {selectedOrganization.organization?.imageUrl && <Image className="rounded-lg" loading="lazy" src={selectedOrganization.organization?.imageUrl} width={140} height={140} alt="123" />}
-              </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {selectedOrganization.organization?.name || "Loading..."}
-                </span>
-              </div>
-              <ChevronsUpDown className="ml-auto" />
+              {selectedOrganization.isLoaded ? (
+                <>
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                    {selectedOrganization.isLoaded && selectedOrganization.organization?.imageUrl ? (
+                      <Image 
+                        src={selectedOrganization.organization.imageUrl} 
+                        alt={selectedOrganization.organization.name || "Organization"}
+                        width={140} 
+                        height={140} 
+                        className="rounded-lg" 
+                      />
+                    ) : (
+                      <Skeleton className="size-8" />
+                    )}
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">
+                      {selectedOrganization.organization?.name}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {getRoleName(selectedOrganization.membership?.role)}
+                    </span>
+                  </div>
+                  <ChevronsUpDown className="ml-auto" />
+                </>
+              ) : (
+                <>
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                    <Skeleton className="size-8" />
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight space-y-1">
+                    <Skeleton className="w-32 h-3" />
+                    <Skeleton className="w-16 h-2" />
+                  </div>
+                </>
+              )}
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -86,20 +110,33 @@ export function OrganizationSwitcher() {
             </DropdownMenuLabel>
             {Array.isArray(userMemberships.data) && userMemberships.data.length !== 0 ? (
               <>
-                {userMemberships.data?.map((mem, index) => (
+                {userMemberships.data?.map((mem) => (
                   <DropdownMenuItem
                     key={mem.id}
                     onClick={() => setOrganization(mem.organization.id)}
                     className="gap-2 p-2"
                   >
                     <div className="flex size-6 items-center justify-center rounded-sm border">
-                      {mem.organization.imageUrl && <Image src={mem.organization.imageUrl} alt="Meow" className="rounded-sm" width={140} height={140} />}
+                      {isLoaded && mem.organization.imageUrl ? (
+                        <Image 
+                          src={mem.organization.imageUrl}
+                          alt={mem.organization.name || "Organization"}
+                          className="rounded-sm"
+                          width={140}
+                          height={140}
+                        />
+                      ) : (
+                        <Skeleton className="size-6 rounded-sm" />
+                      )}
                     </div>
-                    {mem.organization.name}
-
-                    <DropdownMenuShortcut>
-                      ⌘{index + 1}
-                    </DropdownMenuShortcut>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
+                        {mem.organization.name}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {getRoleName(mem.role)}
+                      </span>
+                    </div>
                   </DropdownMenuItem>
                 ))}
               </>

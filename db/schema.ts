@@ -1,7 +1,5 @@
-import { integer, pgTable, varchar, boolean, date, text,uuid } from "drizzle-orm/pg-core";
+import { pgTable, varchar, boolean, date, text,uuid } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { Organization } from "@clerk/nextjs/server";
-import { Cat } from "lucide-react";
 
 export const Device = pgTable('devices', {
     id: uuid().defaultRandom().primaryKey(),
@@ -11,7 +9,7 @@ export const Device = pgTable('devices', {
     currentUserId: varchar('current_user_id'),
     locationId: uuid('location_id').references(() => Location.id),
     purchaseCost: varchar('purchase_cost'),
-    purchaseDate: date('purchase_date'),
+    purchaseDate: text('purchase_date'),
     supplierId: uuid('supplier_id').references(() => Supplier.id),
     purchaseOrderId: varchar('purchase_order_id'),
     serialNumber: varchar('serial_number'),

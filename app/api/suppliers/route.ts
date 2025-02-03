@@ -3,11 +3,11 @@ import { NextResponse, NextRequest } from "next/server";
 import db from "@/db";
 import { Supplier as supplierTable } from "@/db/schema";
 import SupplierSchema from "@/lib/schemas/SupplierSchema";
-import { currentUser, auth, clerkClient } from '@clerk/nextjs/server'
+import { auth } from '@clerk/nextjs/server'
 import { eq, and } from 'drizzle-orm'
 
 
-export const GET = async function GET(req: NextRequest) {
+export const GET = async function GET() {
     const { userId, orgId, has } = await auth()
 
     if (!userId) {
@@ -27,7 +27,7 @@ export const GET = async function GET(req: NextRequest) {
                 },
                 where: eq(supplierTable.organizationId, orgId)
             });
-        } catch (err) {
+        } catch {
             categories = await db.query.Supplier.findMany({
                 where: eq(supplierTable.organizationId, orgId)
             });

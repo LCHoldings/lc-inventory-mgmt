@@ -32,7 +32,7 @@ import type { Status } from "@/lib/types"
 import { fetchStatuses, createStatus, deleteStatus, updateStatus } from "@/lib/statusApi"
 
 // Loader component
-import Loader from "./loader"
+import Loader from "@/components/loader"
 
 // Theme
 import { lcTheme } from "@/lib/utils"
@@ -57,7 +57,7 @@ export function StatusManagement() {
         onError: (error: Error) => toast.error(error.message || "Failed to create status")
     })
 
-    const updateMutation = useMutation<void, Error, Partial<Status> & { id: number }>({
+    const updateMutation = useMutation<void, Error, Partial<Status> & { id: string }>({
         mutationFn: updateStatus,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["statuses"] })
@@ -67,7 +67,7 @@ export function StatusManagement() {
         onError: (error: Error) => toast.error(error.message || "Failed to update status")
     })
 
-    const deleteMutation = useMutation<void, Error, number>({
+    const deleteMutation = useMutation<void, Error, string>({
         mutationFn: deleteStatus,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["statuses"] })
@@ -172,7 +172,7 @@ export function StatusManagement() {
                 </Button>
             </div>
 
-            <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
+            <div className="ag-theme-alpine h-[80vh] w-full">
                 <AgGridReact
                     rowData={statuses}
                     columnDefs={columnDefs}

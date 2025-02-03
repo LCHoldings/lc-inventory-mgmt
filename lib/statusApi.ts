@@ -20,7 +20,7 @@ export async function createStatus(status: Omit<Status, "id" | "organizationId" 
     }
 }
 
-export async function updateStatus(status: Partial<Status> & { id: number }): Promise<void> {
+export async function updateStatus(status: Partial<Status> & { id: string }): Promise<void> {
     const response = await fetch(`/api/statuses?id=${status.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -32,7 +32,7 @@ export async function updateStatus(status: Partial<Status> & { id: number }): Pr
     }
 }
 
-export async function deleteStatus(id: number): Promise<void> {
+export async function deleteStatus(id: string): Promise<void> {
     const response = await fetch(`/api/statuses?id=${id}`, {
         method: "DELETE",
     })
